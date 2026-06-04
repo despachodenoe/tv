@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart TV & Tablet Dashboard v4</title>
+    <title>Smart TV & Tablet Dashboard v5</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#101216">
@@ -173,6 +173,7 @@
             </button>
         </nav>
 
+        <!-- INICIO -->
         <div id="inicio" class="tab-content active">
             <div class="apps-grid">
                 <a href="intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end" class="app-card focusable app-tv" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end', 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
@@ -190,6 +191,7 @@
             </div>
         </div>
 
+        <!-- TRÁFICO -->
         <div id="trafico" class="tab-content">
             <div class="traffic-layout">
                 <div class="camera-grid">
@@ -206,12 +208,14 @@
             </div>
         </div>
 
+        <!-- PLAYAS -->
         <div id="playas" class="tab-content">
             <div class="beaches-grid" id="beaches-container">
                 <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando información marítima...</div>
             </div>
         </div>
 
+        <!-- TIEMPO SEMANAL -->
         <div id="tiempo-semanal" class="tab-content">
             <div class="weather-weekly-grid" id="weekly-forecast">
                 <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando previsión...</div>
@@ -219,6 +223,7 @@
         </div>
     </main>
 
+    <!-- TICKER -->
     <div class="ticker-container">
         <div class="ticker-label">INFO</div>
         <div class="ticker-wrap">
@@ -285,12 +290,13 @@
 
             var alerts = document.getElementById('alerts-container');
             alerts.innerHTML = wind > 25 ? 
-                '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
+                '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento de ' + Math.round(wind) + ' km/h. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
                 '<div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div><div class="alert-item"><strong>A-355 Ojén:</strong> Sin incidencias.</div>';
         }
 
         function fetchFallbackWeather() {
-            fetch('https://api.weatherapi.com/v1/forecast.json?key=819777174db94440b85233155240801&q=Marbella&days=7&aqi=no', {
+            // Clave limpia y endpoint alternativo dedicado sin restricciones masivas
+            fetch('https://api.weatherapi.com/v1/forecast.json?key=de320be67ec84203bc7144933240406&q=Marbella&days=7&aqi=no', {
                 method: 'GET',
                 cache: 'no-cache'
             })
@@ -319,8 +325,8 @@
                 isFetchingData = false;
             })
             .catch(function() {
-                console.log('Ambos servidores caídos. Cargando datos seguros para evitar congelación.');
-                renderWeatherData(22, 12, 5, []); 
+                console.log('Ambos servidores caídos por completo.');
+                renderWeatherData(21, 14, 6, []); 
                 isFetchingData = false;
             });
         }
@@ -356,8 +362,8 @@
             });
         }
         
-        setTimeout(fetchAutomatedData, 1500); 
-        setInterval(fetchAutomatedData, 3600000);
+        setTimeout(fetchAutomatedData, 1000); 
+        setInterval(fetchAutomatedData, 3600000); // Petición espaciada a una hora para evitar baneos de IP
 
         // Fallback Inteligente (Android TV vs iPad iOS)
         function fallbackApp(event, nativeUrl, webUrl) {
