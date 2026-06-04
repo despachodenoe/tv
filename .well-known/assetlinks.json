@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.despachodenoe.twa",
+        "sha256_cert_fingerprints": ["A2:01:96:CD:EC:F4:71:CC:12:00:92:DE:21:F8:D0:77:BD:CB:45:10:8E:E9:24:E9:F4:99:98:83:9C:A4:27:37"]
+      }
+    }]
