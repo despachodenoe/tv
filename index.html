@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart TV & Tablet Dashboard</title>
+    <title>Smart TV & Tablet Dashboard v2</title>
     
+    <!-- DIRECTIVAS ANTI-CACHÉ RADICALES (Fuerzan descarga limpia en cada acceso) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -14,8 +15,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&v=1.0.2" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap&v=1.0.2" rel="stylesheet">
+    <!-- Cache Busting en recursos externos para evitar que la TV almacene estilos antiguos -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&v=1.0.3" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap&v=1.0.3" rel="stylesheet">
 
     <style>
         :root {
@@ -140,7 +142,7 @@
         .ticker-label { background: var(--accent-color); color: white; font-weight: 700; font-size: 14px; padding: 0 15px; height: 100%; display: flex; align-items: center; z-index: 5; }
         .ticker-wrap { width: 100%; overflow: hidden; padding-left: 15px; display: flex; align-items: center; }
         .ticker-track { display: inline-flex; white-space: nowrap; align-items: center; gap: 40px; animation: marquee 30s linear infinite; }
-        .ticker-text { font-size: 15px; color: rgba(255, 255, 255, 0.95); line-height: 36px; }
+        .ticker-text { font-size: 15px; color: rgba(255, 25 packaging, 255, 0.95); line-height: 36px; }
 
         @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
     </style>
@@ -175,6 +177,7 @@
             </button>
         </nav>
 
+        <!-- INICIO -->
         <div id="inicio" class="tab-content active">
             <div class="apps-grid">
                 <a href="intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end" class="app-card focusable app-tv" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end', 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
@@ -192,6 +195,7 @@
             </div>
         </div>
 
+        <!-- TRÁFICO -->
         <div id="trafico" class="tab-content">
             <div class="traffic-layout">
                 <div class="camera-grid">
@@ -208,12 +212,14 @@
             </div>
         </div>
 
+        <!-- PLAYAS -->
         <div id="playas" class="tab-content">
             <div class="beaches-grid" id="beaches-container">
                 <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando información marítima...</div>
             </div>
         </div>
 
+        <!-- TIEMPO SEMANAL -->
         <div id="tiempo-semanal" class="tab-content">
             <div class="weather-weekly-grid" id="weekly-forecast">
                 <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando previsión...</div>
@@ -221,6 +227,7 @@
         </div>
     </main>
 
+    <!-- TICKER -->
     <div class="ticker-container">
         <div class="ticker-label">INFO</div>
         <div class="ticker-wrap">
@@ -255,15 +262,21 @@
             updateDynamicFocusElements();
         }
 
-        // Llamadas de datos unificadas e inmunes (Meteo, Playas, Avisos)
+        // LLAMADA DE DATOS OPTIMIZADA (Ejecución inmediata sin intermediarios)
         function fetchAutomatedData() {
             fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid')
-            .then(function(res) { if(!res.ok) throw new Error(); return res.json(); })
+            .then(function(res) { 
+                if(!res.ok) throw new Error("Error en respuesta de API"); 
+                return res.json(); 
+            })
             .then(function(data) {
                 if(!data || !data.current || !data.daily) return;
+                
+                // 1. Actualizar temperatura actual
                 var currentTemp = Math.round(data.current.temperature_2m);
                 document.getElementById('current-temp').textContent = currentTemp + '°C';
 
+                // 2. Variables para cálculo de playas
                 var wind = data.current.wind_speed_10m;
                 var uv = data.current.uv_index;
                 var waterTemp = Math.round(currentTemp - 4);
@@ -284,6 +297,7 @@
                 });
                 document.getElementById('beaches-container').innerHTML = beachesHtml;
 
+                // 3. Previsión 7 días
                 var dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
                 var hoy = new Date().getDay();
                 var weeklyHtml = '';
@@ -297,15 +311,21 @@
                 }
                 document.getElementById('weekly-forecast').innerHTML = weeklyHtml;
 
+                // 4. Panel de alertas de tráfico
                 var alerts = document.getElementById('alerts-container');
                 alerts.innerHTML = wind > 25 ? 
                     '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
                     '<div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div><div class="alert-item"><strong>A-355 Ojén:</strong> Sin incidencias.</div>';
                 
+                // Forzar refresco de elementos enfocables tras pintar el DOM
                 updateDynamicFocusElements();
-            }).catch(function(e) { console.log('Meteo fallback status: dynamic load failed'); });
+            })
+            .catch(function(e) { 
+                console.log('Error cargando datos del clima:', e);
+                document.getElementById('beaches-container').innerHTML = '<div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Error de red al conectar con el servidor meteorológico.</div>';
+                document.getElementById('weekly-forecast').innerHTML = '<div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">No se pudo recuperar la previsión semanal.</div>';
+            });
         }
-        setTimeout(fetchAutomatedData, 1000); setInterval(fetchAutomatedData, 1800000);
 
         // Enrutamiento Inteligente Inter-plataforma (Android TV Intent vs iPad iOS Link)
         function fallbackApp(event, nativeUrl, webUrl) {
@@ -356,7 +376,7 @@
             }
         });
 
-        // Event Delegation (Captura síncrona de clics para iPad y ratón en elementos dinámicos)
+        // Event Delegation para clics táctiles / ratón en iPad
         document.addEventListener('click', function(e) {
             var target = e.target.closest('.focusable');
             if (target) {
@@ -365,29 +385,23 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', function() {
-            updateDynamicFocusElements();
-        });
-
-        // Refresco del streaming de capturas de la DGT (Evita congelación de imágenes de tráfico)
+        // Refresco del streaming de capturas de la DGT (Evita imágenes congeladas)
         setInterval(function() {
             var cams = document.querySelectorAll('.dgt-cam');
             for (var i = 0; i < cams.length; i++) { cams[i].src = cams[i].src.split('?')[0] + '?t=' + new Date().getTime(); }
         }, 15000);
 
-        // Control Estricto del Ticker con Filtrado Anti-Páginas de Error (404/500 Server Fallback)
+        // Control Estricto del Ticker con Filtrado Anti-Páginas de Error (404 Fallback)
         function loadTicker() {
             fetch('./ticker.md?t=' + new Date().getTime())
             .then(function(res) { 
-                if (!res.ok) { throw new Error("No existe el fichero .md en el host"); }
+                if (!res.ok) { throw new Error("No existe el fichero .md"); }
                 return res.text(); 
             })
             .then(function(text) {
-                // Si el servidor intercepta la petición devolviendo un HTML estructurado en vez del texto plano bruto
                 if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
-                    throw new Error("Respuesta del servidor corrupta o página de error enmascarada");
+                    throw new Error("Página de error HTML detectada");
                 }
-                
                 var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
                 if (lines.length > 0) {
                     var str = lines.join('  •  ');
@@ -399,7 +413,17 @@
                 document.getElementById('ticker-content').innerHTML = '<span class="ticker-text">' + fallbackText + '</span><span class="ticker-text" aria-hidden="true">  •  ' + fallbackText + '</span>';
             });
         }
-        loadTicker(); setInterval(loadTicker, 300000);
+
+        // DISPARO INMEDIATO AL CARGAR EL CONTENIDO (Inmune a interrupciones)
+        window.addEventListener('DOMContentLoaded', function() {
+            fetchAutomatedData();
+            loadTicker();
+            updateDynamicFocusElements();
+        });
+
+        // Intervalos periódicos de recarga en segundo plano
+        setInterval(fetchAutomatedData, 1800000); // 30 Minutos
+        setInterval(loadTicker, 300000);        // 5 Minutos
     </script>
 </body>
 </html>
