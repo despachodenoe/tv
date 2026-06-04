@@ -2,13 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi">
-    <title>Smart TV Home Interface</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart TV & Tablet Dashboard</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#101216">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -27,118 +27,60 @@
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Noto Sans', sans-serif;
-            -webkit-user-select: none;
-            user-select: none;
-            cursor: none !important; 
+            -webkit-user-select: none; user-select: none;
         }
 
         html, body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            width: 100vw;
-            height: 100vh;
-            max-width: 100%;
-            max-height: 100%;
+            width: 100vw; height: 100vh;
+            max-width: 100%; max-height: 100%;
             overflow: hidden;
-            margin: 0;
-            padding: 0;
-            position: absolute;
-            top: 0; left: 0;
+            position: absolute; top: 0; left: 0;
         }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            padding: 25px 40px;
-        }
+        body { display: flex; flex-direction: column; padding: 25px 40px; }
 
         header {
-            height: 70px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-shrink: 0;
+            height: 70px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-shrink: 0;
         }
 
-        .sys-logo {
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
-        .sys-logo strong {
-            color: var(--accent-color);
-            font-weight: 700;
-        }
-
-        .info-status {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
+        .sys-logo { font-size: 24px; font-weight: 300; letter-spacing: 2px; }
+        .sys-logo strong { color: var(--accent-color); font-weight: 700; }
+        .info-status { display: flex; align-items: center; gap: 25px; }
 
         .weather-widget {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.04);
-            padding: 6px 16px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 8px; font-size: 16px;
+            background: rgba(255, 255, 255, 0.04); padding: 6px 16px;
+            border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);
         }
-
         .weather-widget i { font-size: 22px; color: #ffb300; }
+        #clock { font-size: 28px; font-weight: 700; letter-spacing: 1px; }
 
-        #clock {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .tabs-nav {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
+        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .tabs-nav { display: flex; gap: 15px; margin-bottom: 20px; flex-shrink: 0; }
 
         .focusable {
-            outline: none;
-            border: 2px solid transparent;
+            outline: none; border: 2px solid transparent;
             transition: all 0.15s ease-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer !important;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        /* Ocultar puntero solo en entornos que no sean táctiles puros */
+        @media (pointer: coarse) { * { cursor: auto; } }
+        @media (pointer: fine), (pointer: none) { * { cursor: none !important; } }
 
         .tab-btn {
-            background: rgba(255, 255, 255, 0.03);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 16px;
-            font-weight: 500;
-            padding: 10px 22px;
-            border-radius: 12px;
-            gap: 8px;
+            background: rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.5);
+            font-size: 16px; font-weight: 500; padding: 10px 22px; border-radius: 12px; gap: 8px;
         }
-
         .tab-btn i { font-size: 20px; }
-
-        .tab-btn.active {
-            color: #fff;
-            background: var(--accent-color);
-        }
+        .tab-btn.active { color: #fff; background: var(--accent-color); }
 
         .focusable:focus, .focusable.focused {
             border-color: var(--border-hover) !important;
@@ -148,121 +90,34 @@
             color: #fff !important;
         }
 
-        .tab-content {
-            display: none;
-            flex: 1;
-            overflow: hidden;
-        }
+        .tab-content { display: none; flex: 1; overflow: hidden; }
+        .tab-content.active { display: block; }
 
-        .tab-content.active {
-            display: block;
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            height: 85%;
-        }
-
-        .app-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            text-decoration: none;
-            color: #fff;
-            flex-direction: column;
-            gap: 15px;
-            height: 100%;
-        }
-
+        .apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; height: 85%; }
+        .app-card { background: var(--card-bg); border-radius: 16px; text-decoration: none; color: #fff; flex-direction: column; gap: 15px; height: 100%; }
         .app-card i { font-size: 64px; }
         .app-card span { font-size: 18px; font-weight: 500; }
-        
         .app-tv i { color: #2ecc71; }
         .app-youtube i { color: #ff0000; }
         .app-tivify i { color: #ff6f00; }
         .app-disney i { color: #00d2ff; }
 
-        .traffic-layout {
-            display: flex;
-            gap: 20px;
-            height: 100%;
-        }
-
-        .camera-grid {
-            flex: 3;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .camera-card {
-            background: #161920;
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            height: 100%;
-        }
-
-        .camera-title {
-            background: rgba(0, 0, 0, 0.6);
-            color: #fff;
-            padding: 6px 10px;
-            font-size: 13px;
-            position: absolute;
-            top: 0; left: 0; width: 100%; z-index: 2;
-        }
-
+        .traffic-layout { display: flex; gap: 20px; height: 100%; }
+        .camera-grid { flex: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .camera-card { background: #161920; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; height: 100%; }
+        .camera-title { background: rgba(0, 0, 0, 0.6); color: #fff; padding: 6px 10px; font-size: 13px; position: absolute; top: 0; left: 0; width: 100%; z-index: 2; }
         .dgt-cam { width: 100%; height: 100%; object-fit: cover; background: #000; }
 
-        .traffic-alerts-panel {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow: hidden;
-        }
-
+        .traffic-alerts-panel { flex: 1; background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
         .panel-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--accent-color); }
         .alert-item { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; border-left: 4px solid var(--success-color); font-size: 13px; }
         .alert-item.warning { border-left-color: var(--warning-color); }
 
-        .beaches-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            height: 100%;
-        }
-
-        .beach-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            height: 90%;
-        }
-
+        .beaches-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; height: 100%; }
+        .beach-card { background: var(--card-bg); border-radius: 16px; padding: 20px 15px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 90%; }
         .beach-name { font-size: 18px; font-weight: 700; text-align: center; }
         
-        .flag-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            background: rgba(0,0,0,0.4);
-            padding: 5px 12px;
-            border-radius: 20px;
-        }
-        
+        .flag-indicator { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; }
         .flag-dot { width: 10px; height: 10px; border-radius: 50%; }
         .flag-green { background-color: var(--success-color); }
         .flag-yellow { background-color: var(--warning-color); }
@@ -271,40 +126,16 @@
         .stat-row { display: flex; justify-content: space-between; font-size: 14px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
         .stat-row strong { color: #fff; }
 
-        .weather-weekly-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 12px;
-            height: 90%;
-        }
-
-        .weather-day-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
-            padding: 15px 5px;
-            height: 100%;
-        }
-
+        .weather-weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; height: 90%; }
+        .weather-day-card { background: var(--card-bg); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; padding: 15px 5px; height: 100%; }
         .weather-day-card .day-name { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.8); }
         .weather-day-card i { font-size: 44px; color: #ffb300; }
         .weather-day-card .temp-range { font-size: 16px; font-weight: 500; }
 
         .ticker-container {
-            height: 36px;
-            background: rgba(22, 25, 32, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            margin-top: auto;
+            height: 36px; background: rgba(22, 25, 32, 0.85); border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px; overflow: hidden; display: flex; align-items: center; flex-shrink: 0; margin-top: auto;
         }
-
         .ticker-label { background: var(--accent-color); color: white; font-weight: 700; font-size: 14px; padding: 0 15px; height: 100%; display: flex; align-items: center; }
         .ticker-wrap { width: 100%; overflow: hidden; padding-left: 15px; }
         .ticker-track { display: inline-flex; white-space: nowrap; align-items: center; gap: 40px; animation: marquee 30s linear infinite; }
@@ -343,29 +174,23 @@
             </button>
         </nav>
 
-        <!-- PESTAÑA: INICIO -->
         <div id="inicio" class="tab-content active">
             <div class="apps-grid">
                 <a href="intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end" class="app-card focusable app-tv" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end', 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
-                    <i class="material-icons">tv</i>
-                    <span>Televisión en Vivo</span>
+                    <i class="material-icons">tv</i><span>Televisión en Vivo</span>
                 </a>
                 <a href="intent://#Intent;scheme=vnd.youtube.tv;package=com.google.android.youtube.tv;end" class="app-card focusable app-youtube" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'intent://#Intent;scheme=vnd.youtube.tv;package=com.google.android.youtube.tv;end', 'https://www.youtube.com/tv')">
-                    <i class="material-icons">smart_display</i>
-                    <span>YouTube</span>
+                    <i class="material-icons">smart_display</i><span>YouTube</span>
                 </a>
                 <a href="intent://#Intent;scheme=tivify;package=es.tivify;end" class="app-card focusable app-tivify" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'intent://#Intent;scheme=tivify;package=es.tivify;end', 'https://www.tivify.tv')">
-                    <i class="material-icons">live_tv</i>
-                    <span>Tivify</span>
+                    <i class="material-icons">live_tv</i><span>Tivify</span>
                 </a>
                 <a href="intent://#Intent;scheme=disneyplus;package=com.disney.disneyplus;end" class="app-card focusable app-disney" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'intent://#Intent;scheme=disneyplus;package=com.disney.disneyplus;end', 'https://www.disneyplus.com')">
-                    <i class="material-icons">movie</i>
-                    <span>Disney+</span>
+                    <i class="material-icons">movie</i><span>Disney+</span>
                 </a>
             </div>
         </div>
 
-        <!-- PESTAÑA: TRÁFICO -->
         <div id="trafico" class="tab-content">
             <div class="traffic-layout">
                 <div class="camera-grid">
@@ -377,252 +202,184 @@
                 </div>
                 <div class="traffic-alerts-panel">
                     <div class="panel-title"><i class="material-icons">warning</i> Incidencias DGT</div>
-                    <div id="alerts-container">
-                        <div class="alert-item">Buscando incidencias viales en Marbella...</div>
-                    </div>
+                    <div id="alerts-container"><div class="alert-item">Buscando incidencias viales en Marbella...</div></div>
                 </div>
             </div>
         </div>
 
-        <!-- PESTAÑA: PLAYAS METEO AUTOMÁTICA -->
         <div id="playas" class="tab-content">
-            <div class="beaches-grid" id="beaches-container"></div>
+            <div class="beaches-grid" id="beaches-container">
+                <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando información marítima...</div>
+            </div>
         </div>
 
-        <!-- PESTAÑA: TIEMPO SEMANAL -->
         <div id="tiempo-semanal" class="tab-content">
-            <div class="weather-weekly-grid" id="weekly-forecast"></div>
+            <div class="weather-weekly-grid" id="weekly-forecast">
+                <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando previsión...</div>
+            </div>
         </div>
     </main>
 
-    <!-- TICKER -->
     <div class="ticker-container">
         <div class="ticker-label">INFO</div>
         <div class="ticker-wrap">
             <div class="ticker-track" id="ticker-content">
-                <span class="ticker-text">Cargando información en tiempo real...</span>
+                <span class="ticker-text">Smart TV Dashboard Activo • Marbella, Costa del Sol</span>
             </div>
         </div>
     </div>
 
     <script>
+        // Reloj directo
         function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').textContent = 
-                String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            var now = new Date();
+            document.getElementById('clock').textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
 
+        // Pestañas
         function openTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            var contents = document.querySelectorAll('.tab-content');
+            var buttons = document.querySelectorAll('.tab-btn');
+            for(var i=0; i<contents.length; i++) contents[i].classList.remove('active');
+            for(var j=0; j<buttons.length; j++) buttons[j].classList.remove('active');
             
-            const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
-            if(targetBtn) targetBtn.classList.add('active');
-            
+            if(document.getElementById(tabId)) document.getElementById(tabId).classList.add('active');
+            var btn = Array.from(buttons).find(function(b) { return b.getAttribute('onclick').indexOf(tabId) !== -1; });
+            if(btn) btn.classList.add('active');
             updateDynamicFocusElements();
         }
 
-        async function fetchAutomatedData() {
-            try {
-                // LLAMADA CORREGIDA CON EL NUEVO FORMATO DE OPEN-METEO
-                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid');
-                const data = await response.json();
-                
-                // 1. Tiempo actual en cabecera
-                const currentTemp = Math.round(data.current.temperature_2m);
-                document.getElementById('current-temp').textContent = `${currentTemp}°C`;
+        // Bloque Asilado de APIs (Meteo, Playas, Avisos)
+        function fetchAutomatedData() {
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid')
+            .then(function(res) { if(!res.ok) throw new Error(); return res.json(); })
+            .then(function(data) {
+                if(!data || !data.current || !data.daily) return;
+                var currentTemp = Math.round(data.current.temperature_2m);
+                document.getElementById('current-temp').textContent = currentTemp + '°C';
 
-                // Variables para sección Playas extraídas correctamente del JSON estructurado
-                const wind = data.current.wind_speed_10m;
-                const uv = data.current.uv_index;
-                const waterTemp = Math.round(currentTemp - 4);
-                
-                const flagColor = wind > 20 ? 'yellow' : 'green';
-                const flagText = wind > 20 ? 'Precaución' : 'Buena';
+                var wind = data.current.wind_speed_10m;
+                var uv = data.current.uv_index;
+                var waterTemp = Math.round(currentTemp - 4);
+                var flagColor = wind > 20 ? 'yellow' : 'green';
+                var flagText = wind > 20 ? 'Precaución' : 'Buena';
 
-                // 2. Renderizar Playas sin variables rotas
-                const playas = ['Playa de la Fontanilla', 'Playa de Venus', 'Puerto Banús', 'Playa de Cabopino'];
-                let beachesHtml = '';
-                
-                playas.forEach(playa => {
-                    beachesHtml += `
-                        <div class="beach-card">
-                            <span class="beach-name">${playa}</span>
-                            <div class="flag-indicator">
-                                <span class="flag-dot flag-${flagColor}"></span>
-                                <span>${flagText}</span>
-                            </div>
-                            <div class="beach-stats">
-                                <div class="stat-row"><span>Agua:</span><strong>${waterTemp}°C</strong></div>
-                                <div class="stat-row"><span>Oleaje:</span><strong>${wind > 20 ? 'Moderado' : 'Calma'}</strong></div>
-                                <div class="stat-row"><span>Índice UV:</span><strong>${Math.round(uv)}</strong></div>
-                                <div class="stat-row"><span>Viento:</span><strong>${Math.round(wind)} km/h</strong></div>
-                            </div>
-                        </div>`;
+                var playas = ['Playa de la Fontanilla', 'Playa de Venus', 'Puerto Banús', 'Playa de Cabopino'];
+                var beachesHtml = '';
+                playas.forEach(function(p) {
+                    beachesHtml += '<div class="beach-card"><span class="beach-name">' + p + '</span>' +
+                        '<div class="flag-indicator"><span class="flag-dot flag-' + flagColor + '"></span><span>' + flagText + '</span></div>' +
+                        '<div class="beach-stats">' +
+                            '<div class="stat-row"><span>Agua:</span><strong>' + waterTemp + '°C</strong></div>' +
+                            '<div class="stat-row"><span>Oleaje:</span><strong>' + (wind > 20 ? "Moderado" : "Calma") + '</strong></div>' +
+                            '<div class="stat-row"><span>Índice UV:</span><strong>' + Math.round(uv) + '</strong></div>' +
+                            '<div class="stat-row"><span>Viento:</span><strong>' + Math.round(wind) + ' km/h</strong></div>' +
+                        '</div></div>';
                 });
                 document.getElementById('beaches-container').innerHTML = beachesHtml;
 
-                // 3. Previsión semanal corregida leyendo correctamente los arrays de data.daily
-                const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-                const hoy = new Date().getDay();
-                let weeklyHtml = '';
-                
-                for(let i = 0; i < 7; i++) {
-                    const nombreDia = i === 0 ? 'Hoy' : dias[(hoy + i) % 7];
-                    const max = Math.round(data.daily.temperature_2m_max[i]);
-                    const min = Math.round(data.daily.temperature_2m_min[i]);
-                    const code = data.daily.weather_code[i];
-                    
-                    let icon = 'wb_sunny';
-                    if (code > 3) icon = 'cloud';
-                    if (code > 50) icon = 'grain';
-
-                    weeklyHtml += `
-                        <div class="weather-day-card">
-                            <span class="day-name">${nombreDia}</span>
-                            <i class="material-icons">${icon}</i>
-                            <span class="temp-range">${max}° / ${min}°</span>
-                        </div>`;
+                var dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                var hoy = new Date().getDay();
+                var weeklyHtml = '';
+                for(var i = 0; i < 7; i++) {
+                    var nombreDia = (i === 0) ? 'Hoy' : dias[(hoy + i) % 7];
+                    var max = Math.round(data.daily.temperature_2m_max[i]);
+                    var min = Math.round(data.daily.temperature_2m_min[i]);
+                    var code = data.daily.weather_code[i];
+                    var icon = code > 3 ? (code > 50 ? 'grain' : 'cloud') : 'wb_sunny';
+                    weeklyHtml += '<div class="weather-day-card"><span class="day-name">' + nombreDia + '</span><i class="material-icons">' + icon + '</i><span class="temp-range">' + max + '° / ' + min + '°</span></div>';
                 }
                 document.getElementById('weekly-forecast').innerHTML = weeklyHtml;
 
-                // 4. Panel de incidencias de tráfico según el clima de la API
-                const alertsContainer = document.getElementById('alerts-container');
-                if (wind > 25) {
-                    alertsContainer.innerHTML = `
-                        <div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div>
-                        <div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca, visibilidad óptima de subida al puerto.</div>`;
-                } else {
-                    alertsContainer.innerHTML = `
-                        <div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div>
-                        <div class="alert-item"><strong>A-355 Ojén:</strong> Sin retenciones ni incidencias reseñables detectadas.</div>`;
-                }
-
-            } catch (error) {
-                console.error("Error crítico cargando la automatización meteo:", error);
-            }
+                var alerts = document.getElementById('alerts-container');
+                alerts.innerHTML = wind > 25 ? 
+                    '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
+                    '<div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div><div class="alert-item"><strong>A-355 Ojén:</strong> Sin incidencias.</div>';
+            }).catch(function(e) { console.log('Meteo fallback'); });
         }
-        
-        // Lanzamos la carga de datos inicial
-        fetchAutomatedData();
-        setInterval(fetchAutomatedData, 1800000);
+        setTimeout(fetchAutomatedData, 1500); setInterval(fetchAutomatedData, 1800000);
 
+        // Fallback Inteligente (Android TV Intents vs iPad iOS Native URLs)
         function fallbackApp(event, nativeUrl, webUrl) {
             event.preventDefault();
-            window.location.href = nativeUrl;
-            setTimeout(() => { if (!document.hidden) window.open(webUrl, '_blank'); }, 1500);
+            var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            if (isIOS) {
+                window.open(webUrl, '_blank');
+            } else {
+                window.location.href = nativeUrl;
+                setTimeout(function() { if (!document.hidden) window.open(webUrl, '_blank'); }, 1500);
+            }
         }
 
-        // MOTOR DE NAVEGACIÓN D-PAD
-        let focusableElements = [];
-        let currentIndex = 0;
-
+        // Motor de Navegación D-Pad e Interacción Sincronizada Táctil/Ratón
+        var focusableElements = []; var currentIndex = 0;
         function updateDynamicFocusElements() {
-            focusableElements = Array.from(document.querySelectorAll('.focusable')).filter(el => {
-                return el.offsetParent !== null; 
-            });
-            currentIndex = 0;
-            applyFocus();
+            var all = document.querySelectorAll('.focusable'); focusableElements = [];
+            for (var i = 0; i < all.length; i++) { if (all[i].offsetParent !== null) focusableElements.push(all[i]); }
+            currentIndex = 0; applyFocus();
         }
 
         function applyFocus() {
-            document.querySelectorAll('.focusable').forEach(el => {
-                el.classList.remove('focused');
-                el.blur();
-            });
-            if (focusableElements[currentIndex]) {
-                focusableElements[currentIndex].classList.add('focused');
-                focusableElements[currentIndex].focus();
-            }
+            var all = document.querySelectorAll('.focusable');
+            for (var i = 0; i < all.length; i++) { all[i].classList.remove('focused'); all[i].blur(); }
+            if (focusableElements[currentIndex]) { focusableElements[currentIndex].classList.add('focused'); focusableElements[currentIndex].focus(); }
         }
 
         window.addEventListener('keydown', function(e) {
-            const keysToBlock = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter'];
-            if (keysToBlock.includes(e.key)) {
-                e.preventDefault(); 
-                e.stopPropagation();
-            } else {
-                return;
-            }
-
+            var keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter'];
+            if (keys.indexOf(e.key) !== -1) e.preventDefault(); else return;
             if (focusableElements.length === 0) return;
-            let targetGroup = focusableElements[currentIndex].getAttribute('data-nav');
+            var grp = focusableElements[currentIndex].getAttribute('data-nav');
 
             switch(e.key) {
-                case 'ArrowLeft':
-                    if (currentIndex > 0) {
-                        currentIndex--;
-                        applyFocus();
-                    }
-                    break;
-                    
-                case 'ArrowRight':
-                    if (currentIndex < focusableElements.length - 1) {
-                        currentIndex++;
-                        applyFocus();
-                    }
-                    break;
-                    
+                case 'ArrowLeft': if (currentIndex > 0) { currentIndex--; applyFocus(); } break;
+                case 'ArrowRight': if (currentIndex < focusableElements.length - 1) { currentIndex++; applyFocus(); } break;
                 case 'ArrowDown':
-                    if (targetGroup === 'nav') {
-                        const firstApp = focusableElements.findIndex(el => el.getAttribute('data-nav') === 'apps');
-                        if (firstApp !== -1) {
-                            currentIndex = firstApp;
-                            applyFocus();
-                        }
+                    if (grp === 'nav') {
+                        for (var a = 0; a < focusableElements.length; a++) { if (focusableElements[a].getAttribute('data-nav') === 'apps') { currentIndex = a; applyFocus(); break; } }
                     }
                     break;
-                    
                 case 'ArrowUp':
-                    if (targetGroup === 'apps') {
-                        const firstNav = focusableElements.findIndex(el => el.getAttribute('data-nav') === 'nav');
-                        if (firstNav !== -1) {
-                            currentIndex = firstNav;
-                            applyFocus();
-                        }
+                    if (grp === 'apps') {
+                        for (var n = 0; n < focusableElements.length; n++) { if (focusableElements[n].getAttribute('data-nav') === 'nav') { currentIndex = n; applyFocus(); break; } }
                     }
                     break;
-                    
-                case 'Enter':
-                    if (focusableElements[currentIndex]) {
-                        focusableElements[currentIndex].click();
-                    }
-                    break;
+                case 'Enter': if (focusableElements[currentIndex]) focusableElements[currentIndex].click(); break;
             }
-        }, { passive: false });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateDynamicFocusElements();
         });
 
-        setInterval(() => {
-            document.querySelectorAll('.dgt-cam').forEach(img => {
-                const baseUrl = img.src.split('?')[0];
-                img.src = `${baseUrl}?t=${new Date().getTime()}`;
+        window.addEventListener('DOMContentLoaded', function() {
+            updateDynamicFocusElements();
+            // Listener táctil/click para iPad o puntero del ratón
+            document.querySelectorAll('.focusable').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    var idx = focusableElements.indexOf(el);
+                    if(idx !== -1) { currentIndex = idx; applyFocus(); }
+                });
             });
+        });
+
+        // Refresco de cámaras DGT
+        setInterval(function() {
+            var cams = document.querySelectorAll('.dgt-cam');
+            for (var i = 0; i < cams.length; i++) { cams[i].src = cams[i].src.split('?')[0] + '?t=' + new Date().getTime(); }
         }, 15000);
 
-        async function loadTicker() {
-            try {
-                const response = await fetch('./ticker.md?t=' + new Date().getTime());
-                if (!response.ok) throw new Error();
-                const text = await response.text();
-                const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        // Ticker
+        function loadTicker() {
+            fetch('./ticker.md?t=' + new Date().getTime())
+            .then(function(res) { return res.text(); }).then(function(text) {
+                var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
                 if (lines.length > 0) {
-                    const tickerString = lines.join('  •  ');
-                    document.getElementById('ticker-content').innerHTML = `
-                        <span class="ticker-text">${tickerString}</span>
-                        <span class="ticker-text" aria-hidden="true">  •  ${tickerString}</span>`;
+                    var str = lines.join('  •  ');
+                    document.getElementById('ticker-content').innerHTML = '<span class="ticker-text">' + str + '</span><span class="ticker-text" aria-hidden="true">  •  ' + str + '</span>';
                 }
-            } catch (e) {
-                document.getElementById('ticker-content').innerHTML = `<span class="ticker-text">Smart TV Dashboard Activo • Marbella, Costa del Sol</span>`;
-            }
+            }).catch(function() {
+                document.getElementById('ticker-content').innerHTML = '<span class="ticker-text">Smart TV Dashboard Activo • Marbella, Costa del Sol</span>';
+            });
         }
-        loadTicker();
-        setInterval(loadTicker, 300000);
+        loadTicker(); setInterval(loadTicker, 300000);
     </script>
 </body>
 </html>
