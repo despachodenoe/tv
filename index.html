@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart TV & Tablet Dashboard v3</title>
+    <title>Smart TV & Tablet Dashboard</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#101216">
@@ -254,73 +254,108 @@
             updateDynamicFocusElements();
         }
 
-        // Bloque Antibloqueo y Rate-Limit para Open-Meteo
+        // Sistema redundante de clima para evitar bloqueos por IP
         var isFetchingData = false;
+
+        function renderWeatherData(currentTemp, wind, uv, dailyForecast) {
+            document.getElementById('current-temp').textContent = currentTemp + '°C';
+            var waterTemp = Math.round(currentTemp - 4);
+            var flagColor = wind > 20 ? 'yellow' : 'green';
+            var flagText = wind > 20 ? 'Precaución' : 'Buena';
+
+            var playas = ['Playa de la Fontanilla', 'Playa de Venus', 'Puerto Banús', 'Playa de Cabopino'];
+            var beachesHtml = '';
+            playas.forEach(function(p) {
+                beachesHtml += '<div class="beach-card"><span class="beach-name">' + p + '</span>' +
+                    '<div class="flag-indicator"><span class="flag-dot flag-' + flagColor + '"></span><span>' + flagText + '</span></div>' +
+                    '<div class="beach-stats">' +
+                        '<div class="stat-row"><span>Agua:</span><strong>' + waterTemp + '°C</strong></div>' +
+                        '<div class="stat-row"><span>Oleaje:</span><strong>' + (wind > 20 ? "Moderado" : "Calma") + '</strong></div>' +
+                        '<div class="stat-row"><span>Índice UV:</span><strong>' + Math.round(uv) + '</strong></div>' +
+                        '<div class="stat-row"><span>Viento:</span><strong>' + Math.round(wind) + ' km/h</strong></div>' +
+                    '</div></div>';
+            });
+            document.getElementById('beaches-container').innerHTML = beachesHtml;
+
+            var dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            var hoy = new Date().getDay();
+            var weeklyHtml = '';
+            for(var i = 0; i < 7; i++) {
+                var nombreDia = (i === 0) ? 'Hoy' : dias[(hoy + i) % 7];
+                var f = dailyForecast[i] || { max: currentTemp, min: currentTemp - 5, cloud: false };
+                var icon = f.cloud ? 'cloud' : 'wb_sunny';
+                weeklyHtml += '<div class="weather-day-card"><span class="day-name">' + nombreDia + '</span><i class="material-icons">' + icon + '</i><span class="temp-range">' + f.max + '° / ' + f.min + '°</span></div>';
+            }
+            document.getElementById('weekly-forecast').innerHTML = weeklyHtml;
+
+            var alerts = document.getElementById('alerts-container');
+            alerts.innerHTML = wind > 25 ? 
+                '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
+                '<div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div><div class="alert-item"><strong>A-355 Ojén:</strong> Sin incidencias.</div>';
+        }
+
+        function fetchFallbackWeather() {
+            // Servidor secundario comercial de respaldo (WeatherAPI via Cloudflare CDN)
+            fetch('https://api.weatherapi.com/v1/forecast.json?key=819777174db94440b85233155240801&q=Marbella&days=7&aqi=no', {
+                method: 'GET',
+                cache: 'no-cache'
+            })
+            .then(function(res) { if(!res.ok) throw new Error(); return res.json(); })
+            .then(function(data) {
+                var currentTemp = Math.round(data.current.temp_c);
+                var wind = data.current.wind_kph;
+                var uv = data.current.uv;
+                var dailyForecast = [];
+                data.forecast.forecastday.forEach(function(day) {
+                    dailyForecast.push({
+                        max: Math.round(day.day.maxtemp_c),
+                        min: Math.round(day.day.mintemp_c),
+                        cloud: day.day.condition.text.toLowerCase().indexOf('cloud') !== -1 || day.day.condition.text.toLowerCase().indexOf('rain') !== -1
+                    });
+                });
+                renderWeatherData(currentTemp, wind, uv, dailyForecast);
+                isFetchingData = false;
+            })
+            .catch(function() {
+                console.log('Ambos servidores caídos o bloqueados.');
+                isFetchingData = false;
+            });
+        }
 
         function fetchAutomatedData() {
             if (isFetchingData) return;
             isFetchingData = true;
 
+            // Intentar Servidor 1 (Open-Meteo estándar con cabecera limpia)
             fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid', {
                 method: 'GET',
                 cache: 'no-cache', 
                 headers: { 'Accept': 'application/json' }
             })
-            .then(function(res) { 
-                isFetchingData = false;
-                if(!res.ok) throw new Error(); 
-                return res.json(); 
-            })
+            .then(function(res) { if(!res.ok) throw new Error(); return res.json(); })
             .then(function(data) {
-                if(!data || !data.current || !data.daily) return;
+                if(!data || !data.current || !data.daily) { throw new Error(); }
                 var currentTemp = Math.round(data.current.temperature_2m);
-                document.getElementById('current-temp').textContent = currentTemp + '°C';
-
                 var wind = data.current.wind_speed_10m;
                 var uv = data.current.uv_index;
-                var waterTemp = Math.round(currentTemp - 4);
-                var flagColor = wind > 20 ? 'yellow' : 'green';
-                var flagText = wind > 20 ? 'Precaución' : 'Buena';
-
-                var playas = ['Playa de la Fontanilla', 'Playa de Venus', 'Puerto Banús', 'Playa de Cabopino'];
-                var beachesHtml = '';
-                playas.forEach(function(p) {
-                    beachesHtml += '<div class="beach-card"><span class="beach-name">' + p + '</span>' +
-                        '<div class="flag-indicator"><span class="flag-dot flag-' + flagColor + '"></span><span>' + flagText + '</span></div>' +
-                        '<div class="beach-stats">' +
-                            '<div class="stat-row"><span>Agua:</span><strong>' + waterTemp + '°C</strong></div>' +
-                            '<div class="stat-row"><span>Oleaje:</span><strong>' + (wind > 20 ? "Moderado" : "Calma") + '</strong></div>' +
-                            '<div class="stat-row"><span>Índice UV:</span><strong>' + Math.round(uv) + '</strong></div>' +
-                            '<div class="stat-row"><span>Viento:</span><strong>' + Math.round(wind) + ' km/h</strong></div>' +
-                        '</div></div>';
-                });
-                document.getElementById('beaches-container').innerHTML = beachesHtml;
-
-                var dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-                var hoy = new Date().getDay();
-                var weeklyHtml = '';
-                for(var i = 0; i < 7; i++) {
-                    var nombreDia = (i === 0) ? 'Hoy' : dias[(hoy + i) % 7];
-                    var max = Math.round(data.daily.temperature_2m_max[i]);
-                    var min = Math.round(data.daily.temperature_2m_min[i]);
-                    var code = data.daily.weather_code[i];
-                    var icon = code > 3 ? (code > 50 ? 'grain' : 'cloud') : 'wb_sunny';
-                    weeklyHtml += '<div class="weather-day-card"><span class="day-name">' + nombreDia + '</span><i class="material-icons">' + icon + '</i><span class="temp-range">' + max + '° / ' + min + '°</span></div>';
+                var dailyForecast = [];
+                for(var i=0; i<7; i++) {
+                    dailyForecast.push({
+                        max: Math.round(data.daily.temperature_2m_max[i]),
+                        min: Math.round(data.daily.temperature_2m_min[i]),
+                        cloud: data.daily.weather_code[i] > 3
+                    });
                 }
-                document.getElementById('weekly-forecast').innerHTML = weeklyHtml;
-
-                var alerts = document.getElementById('alerts-container');
-                alerts.innerHTML = wind > 25 ? 
-                    '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
-                    '<div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div><div class="alert-item"><strong>A-355 Ojén:</strong> Sin incidencias.</div>';
-            }).catch(function(e) { 
+                renderWeatherData(currentTemp, wind, uv, dailyForecast);
                 isFetchingData = false;
-                console.log('Meteo fallback retry'); 
+            })
+            .catch(function() {
+                // Si falla o la IP está bloqueada, saltamos inmediatamente al plan B sin que el usuario note nada
+                fetchFallbackWeather();
             });
         }
         
-        // Retardos calculados para TV
-        setTimeout(fetchAutomatedData, 3500); 
+        setTimeout(fetchAutomatedData, 1500); 
         setInterval(fetchAutomatedData, 3600000);
 
         // Fallback Inteligente (Android TV vs iPad iOS)
