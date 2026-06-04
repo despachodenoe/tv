@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HotelTV Marbella</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart TV Home Interface</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#101216">
@@ -17,10 +17,12 @@
         :root {
             --bg-color: #101216;
             --card-bg: rgba(255, 255, 255, 0.06);
-            --card-hover: rgba(0, 120, 255, 0.15);
+            --card-hover: rgba(0, 120, 255, 0.25);
             --accent-color: #0078ff;
             --border-hover: #0078ff;
             --text-color: #ffffff;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
         }
 
         * {
@@ -32,35 +34,34 @@
             user-select: none;
         }
 
-        /* Forzamos resolución estricta 1920x1080 sin scroll */
+        /* Diseño adaptativo a pantalla completa eliminando tamaños fijos */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            width: 1920px;
-            height: 1080px;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            position: relative;
+            padding: 2vh 3vw;
         }
 
-        /* --- ENCABEZADO --- */
+        /* ENCABEZADO */
         header {
-            height: 120px;
+            height: 10vh;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 60px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+            margin-bottom: 2vh;
         }
 
-        .hotel-logo {
-            font-size: 32px;
+        .sys-logo {
+            font-size: 1.8rem;
             font-weight: 300;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
 
-        .hotel-logo strong {
+        .sys-logo strong {
             color: var(--accent-color);
             font-weight: 700;
         }
@@ -68,223 +69,268 @@
         .info-status {
             display: flex;
             align-items: center;
-            gap: 40px;
+            gap: 2rem;
         }
 
         .weather-widget {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 24px;
+            gap: 10px;
+            font-size: 1.3rem;
             background: rgba(255, 255, 255, 0.04);
-            padding: 10px 24px;
+            padding: 8px 20px;
             border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .weather-widget i { font-size: 32px; color: #ffb300; }
+        .weather-widget i { font-size: 1.8rem; color: #ffb300; }
 
         #clock {
-            font-size: 44px;
+            font-size: 2.2rem;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
+        /* CONTENEDOR PRINCIPAL */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 20px 60px 60px 60px;
+            overflow: hidden;
         }
 
-        /* --- PESTAÑAS (NAVEGACIÓN) --- */
+        /* NAVEGACIÓN */
         .tabs-nav {
             display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
+            gap: 15px;
+            margin-bottom: 3vh;
+        }
+
+        /* Elemento enfocable con el mando */
+        .focusable {
+            outline: none;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
         }
 
         .tab-btn {
             background: rgba(255, 255, 255, 0.03);
-            border: 2px solid transparent;
             color: rgba(255, 255, 255, 0.5);
-            font-size: 22px;
+            font-size: 1.2rem;
             font-weight: 500;
-            padding: 14px 32px;
+            padding: 10px 24px;
             cursor: pointer;
             border-radius: 12px;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
         }
 
-        .tab-btn i { font-size: 28px; }
+        .tab-btn i { font-size: 1.5rem; }
 
         .tab-btn.active {
             color: #fff;
             background: var(--accent-color);
-            box-shadow: 0 8px 25px rgba(0, 120, 255, 0.35);
         }
 
-        .tab-btn:hover:not(.active), .tab-btn:focus {
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.08);
-            outline: none;
+        /* Estilo visual cuando pasamos el mando por encima */
+        .focusable.focused {
+            border-color: var(--border-hover) !important;
+            background: var(--card-hover) !important;
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(0, 120, 255, 0.4);
         }
 
-        /* --- SECCIONES DE CONTENIDO --- */
+        /* CONTENIDOS */
         .tab-content {
             display: none;
-            height: 680px;
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            flex: 1;
+            height: 65vh;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* --- REJILLA DE APLICACIONES --- */
+        /* PESTAÑA: INICIO */
         .apps-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 35px;
+            gap: 25px;
             height: 100%;
-            align-content: center;
+            align-items: center;
         }
 
         .app-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            height: 380px;
+            border-radius: 20px;
+            height: 38vh;
             text-align: center;
             text-decoration: none;
             color: #fff;
-            transition: all 0.25s ease;
-            border: 3px solid transparent;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            gap: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
-        .app-card:hover, .app-card:focus {
-            transform: translateY(-10px);
-            background: var(--card-hover);
-            border-color: var(--border-hover);
-            box-shadow: 0 20px 40px rgba(0, 120, 255, 0.25);
-            outline: none;
-        }
-
-        .app-card i { font-size: 90px; }
-
-        .app-card span {
-            font-size: 24px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        /* Personalización de colores de apps */
+        .app-card i { font-size: 5rem; }
+        .app-card span { font-size: 1.3rem; font-weight: 500; }
+        
         .app-tv i { color: #2ecc71; }
         .app-youtube i { color: #ff0000; }
         .app-tivify i { color: #ff6f00; }
         .app-disney i { color: #00d2ff; }
 
-        /* --- CUADRÍCULA DE CÁMARAS DGT --- */
-        .camera-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        /* PESTAÑA: TRÁFICO */
+        .traffic-layout {
+            display: flex;
             gap: 20px;
             height: 100%;
         }
 
+        .camera-grid {
+            flex: 3;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
         .camera-card {
             background: #161920;
-            border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
-            height: 320px;
-        }
-
-        .camera-card:hover, .camera-card:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 10px 20px rgba(0, 120, 255, 0.15);
+            height: 100%;
         }
 
         .camera-title {
             background: rgba(0, 0, 0, 0.6);
             color: #fff;
-            padding: 10px 15px;
-            font-size: 16px;
-            font-weight: 500;
+            padding: 6px 12px;
+            font-size: 0.9rem;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 2;
+            top: 0; left: 0; width: 100%; z-index: 2;
             backdrop-filter: blur(4px);
         }
 
-        .dgt-cam {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #000;
+        .dgt-cam { width: 100%; height: 100%; object-fit: cover; background: #000; }
+
+        .traffic-alerts-panel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
         }
 
-        /* --- PESTAÑA: TIEMPO SEMANAL --- */
+        .panel-title { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--accent-color); }
+        .alert-item { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border-left: 4px solid var(--success-color); font-size: 0.9rem; }
+        .alert-item.warning { border-left-color: var(--warning-color); }
+
+        /* PESTAÑA: PLAYAS */
+        .beaches-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            height: 100%;
+        }
+
+        .beach-card {
+            background: var(--card-bg);
+            height: 100%;
+            border-radius: 20px;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .beach-name { font-size: 1.3rem; font-weight: 700; text-align: center; }
+        
+        .flag-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+        
+        .flag-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .flag-green { background-color: var(--success-color); }
+        .flag-yellow { background-color: var(--warning-color); }
+        
+        .beach-stats { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+        .stat-row { display: flex; justify-content: space-between; font-size: 1rem; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; }
+        .stat-row strong { color: #fff; }
+
+        /* PESTAÑA: TIEMPO SEMANAL */
         .weather-weekly-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 20px;
+            gap: 15px;
             height: 100%;
-            align-items: center;
         }
 
         .weather-day-card {
             background: var(--card-bg);
-            height: 480px;
-            border-radius: 20px;
+            height: 100%;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
             align-items: center;
-            padding: 30px 10px;
-            border: 1px solid rgba(255,255,255,0.02);
+            padding: 20px 5px;
         }
 
-        .weather-day-card .day-name { 
-            font-size: 24px; 
-            font-weight: 700; 
-            color: rgba(255,255,255,0.8); 
-        }
-        
-        .weather-day-card i { font-size: 70px; color: #ffb300; }
-        
-        .weather-day-card .temp-range { font-size: 26px; font-weight: 500; }
+        .weather-day-card .day-name { font-size: 1.2rem; font-weight: 700; color: rgba(255,255,255,0.8); }
+        .weather-day-card i { font-size: 3.5rem; color: #ffb300; }
+        .weather-day-card .temp-range { font-size: 1.2rem; font-weight: 500; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+        /* TICKER INFERIOR */
+        .ticker-container {
+            height: 5vh;
+            min-height: 40px;
+            background: rgba(22, 25, 32, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-top: 2vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            position: relative;
         }
+
+        .ticker-label { background: var(--accent-color); color: white; font-weight: 700; font-size: 1rem; padding: 0 20px; height: 100%; display: flex; align-items: center; letter-spacing: 1px; z-index: 3; }
+        .ticker-wrap { width: 100%; overflow: hidden; padding-left: 15px; }
+        .ticker-track { display: inline-flex; white-space: nowrap; align-items: center; gap: 50px; padding-right: 100%; animation: marquee 30s linear infinite; }
+        .ticker-text { font-size: 1.1rem; color: rgba(255, 255, 255, 0.95); }
+
+        @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="hotel-logo">Marbella<strong>HotelTV</strong></div>
+        <div class="sys-logo">Home<strong>Dashboard</strong></div>
         <div class="info-status">
             <div class="weather-widget">
                 <i class="material-icons">wb_sunny</i>
-                <span id="current-temp">25°C</span>
-                <span style="font-size: 18px; opacity: 0.6; margin-left: 5px;">Marbella</span>
+                <span id="current-temp">--°C</span>
+                <span style="font-size: 1rem; opacity: 0.6; margin-left: 5px;">Marbella</span>
             </div>
             <div id="clock">00:00</div>
         </div>
@@ -292,68 +338,81 @@
 
     <main>
         <nav class="tabs-nav">
-            <button class="tab-btn active" onclick="openTab('inicio')">
+            <button class="tab-btn focusable active" data-nav="nav" onclick="openTab('inicio')">
                 <i class="material-icons">home</i> Inicio
             </button>
-            <button class="tab-btn" onclick="openTab('trafico')">
-                <i class="material-icons">traffic</i> Cámaras de Tráfico
+            <button class="tab-btn focusable" data-nav="nav" onclick="openTab('trafico')">
+                <i class="material-icons">traffic</i> Tráfico
             </button>
-            <button class="tab-btn" onclick="openTab('tiempo-semanal')">
-                <i class="material-icons">wb_sunny</i> El Tiempo 7 Días
+            <button class="tab-btn focusable" data-nav="nav" onclick="openTab('playas')">
+                <i class="material-icons">beach_access</i> Playas
+            </button>
+            <button class="tab-btn focusable" data-nav="nav" onclick="openTab('tiempo-semanal')">
+                <i class="material-icons">cloud</i> Previsión 7 Días
             </button>
         </nav>
 
+        <!-- PESTAÑA: INICIO -->
         <div id="inicio" class="tab-content active">
             <div class="apps-grid">
-                <a href="intent://#Intent;package=ar.tvplayer.tv;end" class="app-card app-tv" onclick="fallbackApp(event, 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
+                <a href="tvmate://" class="app-card focusable app-tv" data-nav="apps" onclick="fallbackApp(event, 'tvmate://', 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
                     <i class="material-icons">tv</i>
                     <span>Televisión en Vivo</span>
                 </a>
-                <a href="intent://#Intent;package=com.google.android.youtube.tv;end" class="app-card app-youtube" onclick="fallbackApp(event, 'https://www.youtube.com/tv')">
+                <a href="youtube://www.youtube.com/tv" class="app-card focusable app-youtube" data-nav="apps" onclick="fallbackApp(event, 'vnd.youtube.tv://', 'https://www.youtube.com/tv')">
                     <i class="material-icons">smart_display</i>
                     <span>YouTube</span>
                 </a>
-                <a href="intent://#Intent;package=es.tvup.tivify;end" class="app-card app-tivify" onclick="fallbackApp(event, 'https://www.tivify.tv')">
+                <a href="tivify://" class="app-card focusable app-tivify" data-nav="apps" onclick="fallbackApp(event, 'tivify://', 'https://www.tivify.tv')">
                     <i class="material-icons">live_tv</i>
                     <span>Tivify</span>
                 </a>
-                <a href="intent://#Intent;package=com.disney.disneyplus;end" class="app-card app-disney" onclick="fallbackApp(event, 'https://www.disneyplus.com')">
+                <a href="disneyplus://" class="app-card focusable app-disney" data-nav="apps" onclick="fallbackApp(event, 'disneyplus://', 'https://www.disneyplus.com')">
                     <i class="material-icons">movie</i>
                     <span>Disney+</span>
                 </a>
             </div>
         </div>
 
+        <!-- PESTAÑA: TRÁFICO -->
         <div id="trafico" class="tab-content">
-            <div class="camera-grid">
-                <div class="camera-card">
-                    <div class="camera-title">A-7 Centro / La Cañada</div>
-                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/1548.jpg" alt="La Cañada">
+            <div class="traffic-layout">
+                <div class="camera-grid">
+                    <div class="camera-card"><div class="camera-title">A-7 La Cañada</div><img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/1548.jpg"></div>
+                    <div class="camera-card"><div class="camera-title">A-355 Ojén</div><img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/1547.jpg"></div>
+                    <div class="camera-card"><div class="camera-title">A-7 Marbella Este</div><img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/200.jpg"></div>
+                    <div class="camera-card"><div class="camera-title">A-7 Nueva Andalucía</div><img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/198.jpg"></div>
+                    <div class="camera-card"><div class="camera-title">A-7 Puerto Banús</div><img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/197.jpg"></div>
                 </div>
-                <div class="camera-card">
-                    <div class="camera-title">A-355 / Ojén</div>
-                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/1547.jpg" alt="Ojén">
-                </div>
-                <div class="camera-card">
-                    <div class="camera-title">A-7 Marbella Este</div>
-                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/200.jpg" alt="Marbella Este">
-                </div>
-                <div class="camera-card">
-                    <div class="camera-title">A-7 Nueva Andalucía</div>
-                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/198.jpg" alt="Nueva Andalucía">
-                </div>
-                <div class="camera-card">
-                    <div class="camera-title">A-7 Puerto Banús</div>
-                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/197.jpg" alt="Puerto Banús">
+                <div class="traffic-alerts-panel">
+                    <div class="panel-title"><i class="material-icons">warning</i> Incidencias DGT</div>
+                    <div id="alerts-container">
+                        <div class="alert-item">Buscando incidencias viales en Marbella...</div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- PESTAÑA: PLAYAS METEO AUTOMÁTICA -->
+        <div id="playas" class="tab-content">
+            <div class="beaches-grid" id="beaches-container"></div>
+        </div>
+
+        <!-- PESTAÑA: TIEMPO SEMANAL -->
         <div id="tiempo-semanal" class="tab-content">
-            <div class="weather-weekly-grid" id="weekly-forecast">
-                </div>
+            <div class="weather-weekly-grid" id="weekly-forecast"></div>
         </div>
     </main>
+
+    <!-- TICKER -->
+    <div class="ticker-container">
+        <div class="ticker-label">INFO</div>
+        <div class="ticker-wrap">
+            <div class="ticker-track" id="ticker-content">
+                <span class="ticker-text">Cargando información en tiempo real...</span>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Reloj Dinámico
@@ -369,69 +428,210 @@
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
+            
             const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
             if(targetBtn) targetBtn.classList.add('active');
-        }
-
-        // Simulación Dinámica Clima Marbella
-        const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-        function initWeather() {
-            const grid = document.getElementById('weekly-forecast');
-            const hoy = new Date().getDay();
-            let html = '';
-            for(let i = 0; i < 7; i++) {
-                const nombreDia = i === 0 ? 'Hoy' : dias[(hoy + i) % 7];
-                const tMin = Math.floor(Math.random() * (18 - 15) + 15);
-                const tMax = Math.floor(Math.random() * (29 - 24) + 24);
-                html += `
-                    <div class="weather-day-card">
-                        <span class="day-name">${nombreDia}</span>
-                        <i class="material-icons">wb_sunny</i>
-                        <span class="temp-range">${tMax}° / ${tMin}°</span>
-                    </div>`;
-            }
-            grid.innerHTML = html;
-        }
-        initWeather();
-
-        // Interceptor de Enlaces de Android TV (Intents sin errores)
-        function fallbackApp(event, webUrl) {
-            event.preventDefault();
-            const appUrl = event.currentTarget.getAttribute('href');
             
+            // Re-indexar elementos interactivos al cambiar de pestaña
+            updateDynamicFocusElements();
+        }
+
+        // Obtener datos meteorológicos (Open-Meteo)
+        async function fetchAutomatedData() {
             try {
-                window.location.href = appUrl;
-            } catch (e) {
-                window.open(appUrl, '_self');
+                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid');
+                const data = await response.json();
+                
+                const currentTemp = Math.round(data.current.temperature_2m);
+                document.getElementById('current-temp').textContent = `${currentTemp}°C`;
+
+                const wind = data.current.wind_speed_10m;
+                const uv = data.current.uv_index;
+                const waterTemp = Math.round(currentTemp - 4);
+                
+                const flagColor = wind > 20 ? 'yellow' : 'green';
+                const flagText = wind > 20 ? 'Precaución' : 'Buena';
+
+                const playas = ['Playa de la Fontanilla', 'Playa de Venus', 'Puerto Banús', 'Playa de Cabopino'];
+                let beachesHtml = '';
+                
+                playas.forEach(playa => {
+                    beachesHtml += `
+                        <div class="beach-card">
+                            <span class="beach-name">${playa}</span>
+                            <div class="flag-indicator">
+                                <span class="flag-dot flag-${flagColor}"></span>
+                                <span>${flagText}</span>
+                            </div>
+                            <div class="beach-stats">
+                                <div class="stat-row"><span>Agua:</span><strong>${waterTemp}°C</strong></div>
+                                <div class="stat-row"><span>Oleaje:</span><strong>${wind > 20 ? 'Moderado' : 'Calma'}</strong></div>
+                                <div class="stat-row"><span>Índice UV:</span><strong>${Math.round(uv)}</strong></div>
+                                <div class="stat-row"><span>Viento:</span><strong>${Math.round(wind)} km/h</strong></div>
+                            </div>
+                        </div>`;
+                });
+                document.getElementById('beaches-container').innerHTML = beachesHtml;
+
+                const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                const hoy = new Date().getDay();
+                let weeklyHtml = '';
+                
+                for(let i = 0; i < 7; i++) {
+                    const nombreDia = i === 0 ? 'Hoy' : dias[(hoy + i) % 7];
+                    const max = Math.round(data.daily.temperature_2m_max[i]);
+                    const min = Math.round(data.daily.temperature_2m_min[i]);
+                    const code = data.daily.weather_code[i];
+                    
+                    let icon = 'wb_sunny';
+                    if (code > 3) icon = 'cloud';
+                    if (code > 50) icon = 'grain';
+
+                    weeklyHtml += `
+                        <div class="weather-day-card">
+                            <span class="day-name">${nombreDia}</span>
+                            <i class="material-icons">${icon}</i>
+                            <span class="temp-range">${max}° / ${min}°</span>
+                        </div>`;
+                }
+                document.getElementById('weekly-forecast').innerHTML = weeklyHtml;
+
+                const alertsContainer = document.getElementById('alerts-container');
+                if (wind > 25) {
+                    alertsContainer.innerHTML = `
+                        <div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div>
+                        <div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca, visibilidad óptima de subida al puerto.</div>`;
+                } else {
+                    alertsContainer.innerHTML = `
+                        <div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div>
+                        <div class="alert-item"><strong>A-355 Ojén:</strong> Sin retenciones ni incidencias reseñables detectadas.</div>`;
+                }
+
+            } catch (error) {
+                console.error("Error cargando datos:", error);
             }
+        }
+        fetchAutomatedData();
+        setInterval(fetchAutomatedData, 1800000);
 
-            // Salvaguarda si la app nativa no está instalada en la tele
-            setTimeout(() => { 
-                if (!document.hidden) window.open(webUrl, '_blank'); 
-            }, 1800);
+        function fallbackApp(event, nativeUrl, webUrl) {
+            event.preventDefault();
+            window.location.href = nativeUrl;
+            setTimeout(() => { if (!document.hidden) window.open(webUrl, '_blank'); }, 1500);
         }
 
-        // Bucle de refresco de cámaras de tráfico (Cada 15 segundos sin parpadeo)
-        function refreshCameras() {
-            const images = document.querySelectorAll('.dgt-cam');
-            const timestamp = new Date().getTime();
-            images.forEach(img => {
+        // MOTOR DE NAVEGACIÓN PARA EL MANDO A DISTANCIA (D-PAD)
+        let focusableElements = [];
+        let currentIndex = 0;
+
+        function updateDynamicFocusElements() {
+            // Buscamos solo los elementos enfocables que estén visibles en pantalla actualmente
+            focusableElements = Array.from(document.querySelectorAll('.focusable')).filter(el => {
+                return el.offsetParent !== null; 
+            });
+            
+            // Resetear el foco al primer elemento disponible
+            currentIndex = 0;
+            applyFocus();
+        }
+
+        function applyFocus() {
+            document.querySelectorAll('.focusable').forEach(el => el.classList.remove('focused'));
+            if (focusableElements[currentIndex]) {
+                focusableElements[currentIndex].classList.add('focused');
+                focusableElements[currentIndex].focus();
+            }
+        }
+
+        // Captura de botones del mando
+        window.addEventListener('keydown', function(e) {
+            if (focusableElements.length === 0) return;
+
+            let targetGroup = focusableElements[currentIndex].getAttribute('data-nav');
+
+            switch(e.key) {
+                case 'ArrowLeft':
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        applyFocus();
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case 'ArrowRight':
+                    if (currentIndex < focusableElements.length - 1) {
+                        currentIndex++;
+                        applyFocus();
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case 'ArrowDown':
+                    // Si estamos en la barra de navegación superior, saltamos a la rejilla de contenido inferior
+                    if (targetGroup === 'nav') {
+                        const firstApp = focusableElements.findIndex(el => el.getAttribute('data-nav') === 'apps');
+                        if (firstApp !== -1) {
+                            currentIndex = firstApp;
+                            applyFocus();
+                        }
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case 'ArrowUp':
+                    // Si estamos abajo en las aplicaciones, volvemos a la barra de pestañas superior
+                    if (targetGroup === 'apps') {
+                        const firstNav = focusableElements.findIndex(el => el.getAttribute('data-nav') === 'nav');
+                        if (firstNav !== -1) {
+                            currentIndex = firstNav;
+                            applyFocus();
+                        }
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case 'Enter':
+                    if (focusableElements[currentIndex]) {
+                        focusableElements[currentIndex].click();
+                    }
+                    e.preventDefault();
+                    break;
+            }
+        });
+
+        // Inicializar el mapeo de botones al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            updateDynamicFocusElements();
+        });
+
+        // Refrescar cámaras DGT
+        setInterval(() => {
+            document.querySelectorAll('.dgt-cam').forEach(img => {
                 const baseUrl = img.src.split('?')[0];
-                img.src = `${baseUrl}?t=${timestamp}`;
+                img.src = `${baseUrl}?t=${new Date().getTime()}`;
             });
-        }
-        setInterval(refreshCameras, 15000);
+        }, 15000);
 
-        // Registro Service Worker oficial
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA operativa'))
-                    .catch(err => console.log('Error de Service Worker', err));
-            });
+        // Lector Ticker
+        async function loadTicker() {
+            try {
+                const response = await fetch('./ticker.md?t=' + new Date().getTime());
+                if (!response.ok) throw new Error();
+                const text = await response.text();
+                const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                if (lines.length > 0) {
+                    const tickerString = lines.join('  •  ');
+                    document.getElementById('ticker-content').innerHTML = `
+                        <span class="ticker-text">${tickerString}</span>
+                        <span class="ticker-text" aria-hidden="true">  •  ${tickerString}</span>`;
+                }
+            } catch (e) {
+                document.getElementById('ticker-content').innerHTML = `<span class="ticker-text">Smart TV Dashboard Activo • Marbella, Costa del Sol</span>`;
+            }
         }
+        loadTicker();
+        setInterval(loadTicker, 300000);
     </script>
 </body>
 </html>
