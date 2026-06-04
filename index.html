@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart TV Home Interface</title>
     
     <link rel="manifest" href="manifest.json">
@@ -25,7 +25,7 @@
             --warning-color: #f1c40f;
         }
 
-        /* Ocultar cursor virtual por CSS de forma agresiva */
+        /* Ocultar cursor virtual por CSS en Xiaomi */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -36,24 +36,27 @@
             cursor: none !important; 
         }
 
-        /* Forzar contenedor estricto libre de desbordamientos por zoom */
         html, body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
             overflow: hidden;
-            position: fixed;
+            margin: 0;
+            padding: 0;
+            position: absolute;
             top: 0; left: 0;
         }
 
         body {
             display: flex;
             flex-direction: column;
-            padding: 20px 40px;
+            padding: 25px 40px;
         }
 
-        /* ENCABEZADO OPTIMIZADO */
+        /* ENCABEZADO */
         header {
             height: 70px;
             display: flex;
@@ -99,7 +102,7 @@
             letter-spacing: 1px;
         }
 
-        /* CONTENEDOR PRINCIPAL RESTRINGIDO */
+        /* CONTENEDOR PRINCIPAL */
         main {
             flex: 1;
             display: flex;
@@ -115,11 +118,13 @@
             flex-shrink: 0;
         }
 
-        /* Elementos interactivos nativos */
         .focusable {
             outline: none;
             border: 2px solid transparent;
             transition: all 0.15s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tab-btn {
@@ -129,8 +134,6 @@
             font-weight: 500;
             padding: 10px 22px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
             gap: 8px;
         }
 
@@ -141,7 +144,7 @@
             background: var(--accent-color);
         }
 
-        /* ESTILO DE FOCO PARA EL MANDO (Sustituye al puntero) */
+        /* ESTILO DE FOCO PARA EL MANDO */
         .focusable:focus, .focusable.focused {
             border-color: var(--border-hover) !important;
             background: var(--card-hover) !important;
@@ -175,10 +178,7 @@
             text-align: center;
             text-decoration: none;
             color: #fff;
-            display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             gap: 15px;
             height: 100%;
         }
@@ -355,27 +355,33 @@
             </button>
         </nav>
 
+        <!-- PESTAÑA: INICIO -->
         <div id="inicio" class="tab-content active">
             <div class="apps-grid">
-                <a href="tvmate://" class="app-card focusable app-tv" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'tvmate://', 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
+                <!-- TiviMate optimizado para Xiaomi -->
+                <div class="app-card focusable app-tv" data-nav="apps" tabindex="0" onclick="launchXiaomiApp('intent://#Intent;scheme=tvmate;package=ar.tvplayer.tv;end', 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
                     <i class="material-icons">tv</i>
-                    <span>Televisión en Vivo</span>
-                </a>
-                <a href="youtube://www.youtube.com/tv" class="app-card focusable app-youtube" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'vnd.youtube.tv://', 'https://www.youtube.com/tv')">
+                    <span>TiviMate</span>
+                </div>
+                <!-- YouTube Android TV optimizado para Xiaomi -->
+                <div class="app-card focusable app-youtube" data-nav="apps" tabindex="0" onclick="launchXiaomiApp('intent://#Intent;scheme=vnd.youtube.tv;package=com.google.android.youtube.tv;end', 'https://www.youtube.com/tv')">
                     <i class="material-icons">smart_display</i>
                     <span>YouTube</span>
-                </a>
-                <a href="tivify://" class="app-card focusable app-tivify" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'tivify://', 'https://www.tivify.tv')">
+                </div>
+                <!-- Tivify optimizado para Xiaomi -->
+                <div class="app-card focusable app-tivify" data-nav="apps" tabindex="0" onclick="launchXiaomiApp('intent://#Intent;scheme=tivify;package=es.tivify;end', 'https://www.tivify.tv')">
                     <i class="material-icons">live_tv</i>
                     <span>Tivify</span>
-                </a>
-                <a href="disneyplus://" class="app-card focusable app-disney" data-nav="apps" tabindex="0" onclick="fallbackApp(event, 'disneyplus://', 'https://www.disneyplus.com')">
+                </div>
+                <!-- Disney+ optimizado para Xiaomi -->
+                <div class="app-card focusable app-disney" data-nav="apps" tabindex="0" onclick="launchXiaomiApp('intent://#Intent;scheme=disneyplus;package=com.disney.disneyplus;end', 'https://www.disneyplus.com')">
                     <i class="material-icons">movie</i>
                     <span>Disney+</span>
-                </a>
+                </div>
             </div>
         </div>
 
+        <!-- PESTAÑA: TRÁFICO -->
         <div id="trafico" class="tab-content">
             <div class="traffic-layout">
                 <div class="camera-grid">
@@ -394,15 +400,18 @@
             </div>
         </div>
 
+        <!-- PESTAÑA: PLAYAS METEO AUTOMÁTICA -->
         <div id="playas" class="tab-content">
             <div class="beaches-grid" id="beaches-container"></div>
         </div>
 
+        <!-- PESTAÑA: TIEMPO SEMANAL -->
         <div id="tiempo-semanal" class="tab-content">
             <div class="weather-weekly-grid" id="weekly-forecast"></div>
         </div>
     </main>
 
+    <!-- TICKER -->
     <div class="ticker-container">
         <div class="ticker-label">INFO</div>
         <div class="ticker-wrap">
@@ -509,13 +518,24 @@
         fetchAutomatedData();
         setInterval(fetchAutomatedData, 1800000);
 
-        function fallbackApp(event, nativeUrl, webUrl) {
-            event.preventDefault();
-            window.location.href = nativeUrl;
-            setTimeout(() => { if (!document.hidden) window.open(webUrl, '_blank'); }, 1500);
+        // FUNCIÓN CLAVE PARA LAS TELEVISIONES XIAOMI (Elimina el error de URL no soportada)
+        function launchXiaomiApp(intentUrl, webFallback) {
+            // En Xiaomi TV Bro necesita forzar la asignación directa al documento principal
+            try {
+                window.location.assign(intentUrl);
+            } catch (e) {
+                window.location.href = intentUrl;
+            }
+            
+            // Si la app no responde en 1.2 segundos, abre la alternativa web de emergencia
+            setTimeout(() => {
+                if (!document.hidden) {
+                    window.open(webFallback, '_blank');
+                }
+            }, 1200);
         }
 
-        // MOTOR DE NAVEGACIÓN AGRESIVO (Bloqueo de Interceptación del Sistema)
+        // MOTOR DE NAVEGACIÓN AGRESIVO (Bloqueo de Interceptación del Sistema PatchWall)
         let focusableElements = [];
         let currentIndex = 0;
 
@@ -530,19 +550,18 @@
         function applyFocus() {
             document.querySelectorAll('.focusable').forEach(el => {
                 el.classList.remove('focused');
-                el.blur(); // Limpiar focos anteriores
+                el.blur(); 
             });
             if (focusableElements[currentIndex]) {
                 focusableElements[currentIndex].classList.add('focused');
-                focusableElements[currentIndex].focus(); // Forzar el foco HTML nativo
+                focusableElements[currentIndex].focus(); 
             }
         }
 
-        // Bloquear cualquier evento por defecto del navegador que mueva el ratón virtual
         window.addEventListener('keydown', function(e) {
             const keysToBlock = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter'];
             if (keysToBlock.includes(e.key)) {
-                e.preventDefault(); // Anula la acción por defecto de mover el puntero de la tele
+                e.preventDefault(); 
                 e.stopPropagation();
             } else {
                 return;
@@ -592,7 +611,7 @@
                     }
                     break;
             }
-        }, { passive: false }); // Desactiva la lectura pasiva para permitir el preventDefault estricto
+        }, { passive: false });
 
         window.addEventListener('DOMContentLoaded', () => {
             updateDynamicFocusElements();
