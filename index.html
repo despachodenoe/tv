@@ -138,7 +138,7 @@
         /* --- SECCIONES DE CONTENIDO --- */
         .tab-content {
             display: none;
-            height: 680px; /* Espacio exacto restante */
+            height: 680px;
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
@@ -152,7 +152,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 35px;
             height: 100%;
-            align-items: center;
+            align-content: center;
         }
 
         .app-card {
@@ -180,9 +180,7 @@
             outline: none;
         }
 
-        .app-card i {
-            font-size: 90px;
-        }
+        .app-card i { font-size: 90px; }
 
         .app-card span {
             font-size: 24px;
@@ -196,17 +194,49 @@
         .app-tivify i { color: #ff6f00; }
         .app-disney i { color: #00d2ff; }
 
-        /* --- PESTAÑA: TRÁFICO --- */
-        .camera-container {
+        /* --- CUADRÍCULA DE CÁMARAS DGT --- */
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            height: 100%;
+        }
+
+        .camera-card {
+            background: #161920;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 320px;
+        }
+
+        .camera-card:hover, .camera-card:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 20px rgba(0, 120, 255, 0.15);
+        }
+
+        .camera-title {
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: 500;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2;
+            backdrop-filter: blur(4px);
+        }
+
+        .dgt-cam {
             width: 100%;
             height: 100%;
-            background: #050608;
-            border-radius: 24px;
-            border: 2px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            object-fit: cover;
+            background: #000;
         }
 
         /* --- PESTAÑA: TIEMPO SEMANAL --- */
@@ -236,15 +266,9 @@
             color: rgba(255,255,255,0.8); 
         }
         
-        .weather-day-card i { 
-            font-size: 70px; 
-            color: #ffb300; 
-        }
+        .weather-day-card i { font-size: 70px; color: #ffb300; }
         
-        .weather-day-card .temp-range { 
-            font-size: 26px; 
-            font-weight: 500; 
-        }
+        .weather-day-card .temp-range { font-size: 26px; font-weight: 500; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.98); }
@@ -275,25 +299,25 @@
                 <i class="material-icons">traffic</i> Cámaras de Tráfico
             </button>
             <button class="tab-btn" onclick="openTab('tiempo-semanal')">
-                <i class="material-icons">wkb_sunny</i> El Tiempo 7 Días
+                <i class="material-icons">wb_sunny</i> El Tiempo 7 Días
             </button>
         </nav>
 
         <div id="inicio" class="tab-content active">
             <div class="apps-grid">
-                <a href="tivimate://" class="app-card app-tv" onclick="fallbackApp(event, 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
+                <a href="intent://#Intent;package=ar.tvplayer.tv;end" class="app-card app-tv" onclick="fallbackApp(event, 'https://play.google.com/store/apps/details?id=ar.tvplayer.tv')">
                     <i class="material-icons">tv</i>
                     <span>Televisión en Vivo</span>
                 </a>
-                <a href="youtube://" class="app-card app-youtube" onclick="fallbackApp(event, 'https://www.youtube.com/tv')">
+                <a href="intent://#Intent;package=com.google.android.youtube.tv;end" class="app-card app-youtube" onclick="fallbackApp(event, 'https://www.youtube.com/tv')">
                     <i class="material-icons">smart_display</i>
                     <span>YouTube</span>
                 </a>
-                <a href="tivify://" class="app-card app-tivify" onclick="fallbackApp(event, 'https://www.tivify.tv')">
+                <a href="intent://#Intent;package=es.tvup.tivify;end" class="app-card app-tivify" onclick="fallbackApp(event, 'https://www.tivify.tv')">
                     <i class="material-icons">live_tv</i>
                     <span>Tivify</span>
                 </a>
-                <a href="disneyplus://" class="app-card app-disney" onclick="fallbackApp(event, 'https://www.disneyplus.com')">
+                <a href="intent://#Intent;package=com.disney.disneyplus;end" class="app-card app-disney" onclick="fallbackApp(event, 'https://www.disneyplus.com')">
                     <i class="material-icons">movie</i>
                     <span>Disney+</span>
                 </a>
@@ -301,14 +325,26 @@
         </div>
 
         <div id="trafico" class="tab-content">
-            <div class="camera-container">
-                <div style="text-align: center; color: rgba(255,255,255,0.5);">
-                    <i class="material-icons" style="font-size: 80px; margin-bottom: 20px; color: var(--accent-color);">videocam</i>
-                    <h2>CCTV A-7 Marbella Centro</h2>
-                    <p style="margin-top: 10px; font-size: 18px;">[Streaming de tráfico optimizado para pantallas SmartTV]</p>
-                    <div style="margin-top: 30px; width: 640px; height: 360px; background: #1a1d24; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; border: 2px dashed rgba(255,255,255,0.1)">
-                         <span style="font-size: 16px;">Señal RTMP / HLS simulada en vivo</span>
-                    </div>
+            <div class="camera-grid">
+                <div class="camera-card">
+                    <div class="camera-title">A-7 Centro / La Cañada</div>
+                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/1548.jpg" alt="La Cañada">
+                </div>
+                <div class="camera-card">
+                    <div class="camera-title">A-355 / Ojén</div>
+                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/1547.jpg" alt="Ojén">
+                </div>
+                <div class="camera-card">
+                    <div class="camera-title">A-7 Marbella Este</div>
+                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/200.jpg" alt="Marbella Este">
+                </div>
+                <div class="camera-card">
+                    <div class="camera-title">A-7 Nueva Andalucía</div>
+                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/198.jpg" alt="Nueva Andalucía">
+                </div>
+                <div class="camera-card">
+                    <div class="camera-title">A-7 Puerto Banús</div>
+                    <img class="dgt-cam" src="https://etraffic.dgt.es/camarasEtraffic/197.jpg" alt="Puerto Banús">
                 </div>
             </div>
         </div>
@@ -320,7 +356,7 @@
     </main>
 
     <script>
-        // Reloj
+        // Reloj Dinámico
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').textContent = 
@@ -329,7 +365,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Pestañas
+        // Control de Pestañas
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -339,7 +375,7 @@
             if(targetBtn) targetBtn.classList.add('active');
         }
 
-        // Simulación Clima 7 Días
+        // Simulación Dinámica Clima Marbella
         const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
         function initWeather() {
             const grid = document.getElementById('weekly-forecast');
@@ -360,23 +396,42 @@
         }
         initWeather();
 
-        // Manejo Anti-fallos para Apps nativas
+        // Interceptor de Enlaces de Android TV (Intents sin errores)
         function fallbackApp(event, webUrl) {
             event.preventDefault();
             const appUrl = event.currentTarget.getAttribute('href');
-            window.location.href = appUrl;
-            setTimeout(() => { if (!document.hidden) window.open(webUrl, '_blank'); }, 1600);
+            
+            try {
+                window.location.href = appUrl;
+            } catch (e) {
+                window.open(appUrl, '_self');
+            }
+
+            // Salvaguarda si la app nativa no está instalada en la tele
+            setTimeout(() => { 
+                if (!document.hidden) window.open(webUrl, '_blank'); 
+            }, 1800);
         }
 
-        // Registro Service Worker oficial (Requisito GitHub Pages)
+        // Bucle de refresco de cámaras de tráfico (Cada 15 segundos sin parpadeo)
+        function refreshCameras() {
+            const images = document.querySelectorAll('.dgt-cam');
+            const timestamp = new Date().getTime();
+            images.forEach(img => {
+                const baseUrl = img.src.split('?')[0];
+                img.src = `${baseUrl}?t=${timestamp}`;
+            });
+        }
+        setInterval(refreshCameras, 15000);
+
+        // Registro Service Worker oficial
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA lista y registrada.'))
-                    .catch(err => console.log('Error de registro', err));
+                    .then(reg => console.log('PWA operativa'))
+                    .catch(err => console.log('Error de Service Worker', err));
             });
         }
     </script>
 </body>
-  </html>
-  
+</html>
