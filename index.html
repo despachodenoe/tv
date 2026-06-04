@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart TV & Tablet Dashboard</title>
     
-    <link rel="manifest" href="manifest.json">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <link class="manifest" href="manifest.json">
     <meta name="theme-color" content="#101216">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&v=1.0.2" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap&v=1.0.2" rel="stylesheet">
 
     <style>
         :root {
@@ -71,10 +75,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Ocultar puntero solo en entornos que no sean táctiles puros */
-        @media (pointer: coarse) { * { cursor: auto; } }
-        @media (pointer: fine), (pointer: none) { * { cursor: none !important; } }
-
         .tab-btn {
             background: rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.5);
             font-size: 16px; font-weight: 500; padding: 10px 22px; border-radius: 12px; gap: 8px;
@@ -132,14 +132,15 @@
         .weather-day-card i { font-size: 44px; color: #ffb300; }
         .weather-day-card .temp-range { font-size: 16px; font-weight: 500; }
 
+        /* Estructura Estable para el Ticker */
         .ticker-container {
             height: 36px; background: rgba(22, 25, 32, 0.85); border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 10px; overflow: hidden; display: flex; align-items: center; flex-shrink: 0; margin-top: auto;
         }
-        .ticker-label { background: var(--accent-color); color: white; font-weight: 700; font-size: 14px; padding: 0 15px; height: 100%; display: flex; align-items: center; }
-        .ticker-wrap { width: 100%; overflow: hidden; padding-left: 15px; }
+        .ticker-label { background: var(--accent-color); color: white; font-weight: 700; font-size: 14px; padding: 0 15px; height: 100%; display: flex; align-items: center; z-index: 5; }
+        .ticker-wrap { width: 100%; overflow: hidden; padding-left: 15px; display: flex; align-items: center; }
         .ticker-track { display: inline-flex; white-space: nowrap; align-items: center; gap: 40px; animation: marquee 30s linear infinite; }
-        .ticker-text { font-size: 15px; color: rgba(255, 255, 255, 0.95); }
+        .ticker-text { font-size: 15px; color: rgba(255, 255, 255, 0.95); line-height: 36px; }
 
         @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
     </style>
@@ -230,14 +231,14 @@
     </div>
 
     <script>
-        // Reloj directo
+        // Reloj estable en tiempo real
         function updateClock() {
             var now = new Date();
             document.getElementById('clock').textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // Pestañas
+        // Control de Pestañas
         function openTab(tabId) {
             var contents = document.querySelectorAll('.tab-content');
             var buttons = document.querySelectorAll('.tab-btn');
@@ -245,12 +246,16 @@
             for(var j=0; j<buttons.length; j++) buttons[j].classList.remove('active');
             
             if(document.getElementById(tabId)) document.getElementById(tabId).classList.add('active');
-            var btn = Array.from(buttons).find(function(b) { return b.getAttribute('onclick').indexOf(tabId) !== -1; });
-            if(btn) btn.classList.add('active');
+            
+            for(var k=0; k<buttons.length; k++) {
+                if(buttons[k].getAttribute('onclick').indexOf(tabId) !== -1) {
+                    buttons[k].classList.add('active');
+                }
+            }
             updateDynamicFocusElements();
         }
 
-        // Bloque Asilado de APIs (Meteo, Playas, Avisos)
+        // Llamadas de datos unificadas e inmunes (Meteo, Playas, Avisos)
         function fetchAutomatedData() {
             fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid')
             .then(function(res) { if(!res.ok) throw new Error(); return res.json(); })
@@ -296,11 +301,13 @@
                 alerts.innerHTML = wind > 25 ? 
                     '<div class="alert-item warning"><strong>A-7 Marbella:</strong> Rachas de viento moderadas. Precaución vehículos altos.</div><div class="alert-item"><strong>A-355 Ojén:</strong> Calzada seca.</div>' :
                     '<div class="alert-item"><strong>A-7 / AP-7:</strong> Circulación fluida en ambos sentidos (San Pedro - Marbella Este).</div><div class="alert-item"><strong>A-355 Ojén:</strong> Sin incidencias.</div>';
-            }).catch(function(e) { console.log('Meteo fallback'); });
+                
+                updateDynamicFocusElements();
+            }).catch(function(e) { console.log('Meteo fallback status: dynamic load failed'); });
         }
-        setTimeout(fetchAutomatedData, 1500); setInterval(fetchAutomatedData, 1800000);
+        setTimeout(fetchAutomatedData, 1000); setInterval(fetchAutomatedData, 1800000);
 
-        // Fallback Inteligente (Android TV Intents vs iPad iOS Native URLs)
+        // Enrutamiento Inteligente Inter-plataforma (Android TV Intent vs iPad iOS Link)
         function fallbackApp(event, nativeUrl, webUrl) {
             event.preventDefault();
             var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -312,12 +319,12 @@
             }
         }
 
-        // Motor de Navegación D-Pad e Interacción Sincronizada Táctil/Ratón
+        // Motor de Navegación del Mando (D-Pad)
         var focusableElements = []; var currentIndex = 0;
         function updateDynamicFocusElements() {
             var all = document.querySelectorAll('.focusable'); focusableElements = [];
             for (var i = 0; i < all.length; i++) { if (all[i].offsetParent !== null) focusableElements.push(all[i]); }
-            currentIndex = 0; applyFocus();
+            applyFocus();
         }
 
         function applyFocus() {
@@ -349,34 +356,47 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', function() {
-            updateDynamicFocusElements();
-            // Listener táctil/click para iPad o puntero del ratón
-            document.querySelectorAll('.focusable').forEach(function(el) {
-                el.addEventListener('click', function() {
-                    var idx = focusableElements.indexOf(el);
-                    if(idx !== -1) { currentIndex = idx; applyFocus(); }
-                });
-            });
+        // Event Delegation (Captura síncrona de clics para iPad y ratón en elementos dinámicos)
+        document.addEventListener('click', function(e) {
+            var target = e.target.closest('.focusable');
+            if (target) {
+                var idx = focusableElements.indexOf(target);
+                if (idx !== -1) { currentIndex = idx; applyFocus(); }
+            }
         });
 
-        // Refresco de cámaras DGT
+        window.addEventListener('DOMContentLoaded', function() {
+            updateDynamicFocusElements();
+        });
+
+        // Refresco del streaming de capturas de la DGT (Evita congelación de imágenes de tráfico)
         setInterval(function() {
             var cams = document.querySelectorAll('.dgt-cam');
             for (var i = 0; i < cams.length; i++) { cams[i].src = cams[i].src.split('?')[0] + '?t=' + new Date().getTime(); }
         }, 15000);
 
-        // Ticker
+        // Control Estricto del Ticker con Filtrado Anti-Páginas de Error (404/500 Server Fallback)
         function loadTicker() {
             fetch('./ticker.md?t=' + new Date().getTime())
-            .then(function(res) { return res.text(); }).then(function(text) {
+            .then(function(res) { 
+                if (!res.ok) { throw new Error("No existe el fichero .md en el host"); }
+                return res.text(); 
+            })
+            .then(function(text) {
+                // Si el servidor intercepta la petición devolviendo un HTML estructurado en vez del texto plano bruto
+                if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+                    throw new Error("Respuesta del servidor corrupta o página de error enmascarada");
+                }
+                
                 var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
                 if (lines.length > 0) {
                     var str = lines.join('  •  ');
                     document.getElementById('ticker-content').innerHTML = '<span class="ticker-text">' + str + '</span><span class="ticker-text" aria-hidden="true">  •  ' + str + '</span>';
                 }
-            }).catch(function() {
-                document.getElementById('ticker-content').innerHTML = '<span class="ticker-text">Smart TV Dashboard Activo • Marbella, Costa del Sol</span>';
+            })
+            .catch(function() {
+                var fallbackText = "Smart TV Dashboard Activo • Marbella, Costa del Sol";
+                document.getElementById('ticker-content').innerHTML = '<span class="ticker-text">' + fallbackText + '</span><span class="ticker-text" aria-hidden="true">  •  ' + fallbackText + '</span>';
             });
         }
         loadTicker(); setInterval(loadTicker, 300000);
