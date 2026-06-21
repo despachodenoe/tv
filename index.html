@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart TV & Tablet Dashboard v5</title>
+    <title>Smart TV & Tablet Dashboard</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#101216">
@@ -23,6 +23,7 @@
             --text-color: #ffffff;
             --success-color: #2ecc71;
             --warning-color: #f1c40f;
+            --info-blue: #3498db;
         }
 
         * {
@@ -61,11 +62,16 @@
         #clock { font-size: 28px; font-weight: 700; letter-spacing: 1px; }
 
         main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .tabs-nav { display: flex; gap: 15px; margin-bottom: 20px; flex-shrink: 0; }
+        
+        /* Margen interno añadido para evitar el recorte del hover en las pestañas */
+        .tabs-nav { display: flex; gap: 15px; margin-bottom: 20px; flex-shrink: 0; padding: 5px; }
 
         .focusable {
             outline: none; border: 2px solid transparent;
-            transition: all 0.15s ease-out;
+            transition: transform 0.18s cubic-bezier(0.215, 0.610, 0.355, 1), 
+                        background-color 0.18s ease, 
+                        box-shadow 0.18s ease, 
+                        border-color 0.18s ease;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer !important;
             -webkit-tap-highlight-color: transparent;
@@ -81,18 +87,33 @@
         .tab-btn i { font-size: 20px; }
         .tab-btn.active { color: #fff; background: var(--accent-color); }
 
+        /* Ajuste de escala y sombreado optimizado para que no desborde de forma brusca */
         .focusable:focus, .focusable.focused {
             border-color: var(--border-hover) !important;
             background: var(--card-hover) !important;
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(0, 120, 255, 0.4);
+            transform: scale(1.025);
+            box-shadow: 0 0 14px rgba(0, 120, 255, 0.45);
             color: #fff !important;
+            z-index: 10; /* Eleva el elemento enfocado por encima de los demás */
         }
 
-        .tab-content { display: none; flex: 1; overflow: hidden; }
+        /* En dispositivos táctiles puros evitamos efectos focus agresivos persistentes si no se usan */
+        @media (hover: hover) {
+            .focusable:hover {
+                border-color: var(--border-hover) !important;
+                background: var(--card-hover) !important;
+                transform: scale(1.025);
+                box-shadow: 0 0 14px rgba(0, 120, 255, 0.45);
+                color: #fff !important;
+                z-index: 10;
+            }
+        }
+
+        .tab-content { display: none; flex: 1; overflow: visible; } /* Cambiado a visible para dejar salir el sombreado */
         .tab-content.active { display: block; }
 
-        .apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; height: 85%; }
+        /* Espaciado perimetral en la rejilla para albergar el resplandor de las tarjetas externas */
+        .apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; height: 85%; padding: 6px; }
         .app-card { background: var(--card-bg); border-radius: 16px; text-decoration: none; color: #fff; flex-direction: column; gap: 15px; height: 100%; }
         .app-card i { font-size: 64px; }
         .app-card span { font-size: 18px; font-weight: 500; }
@@ -101,7 +122,7 @@
         .app-tivify i { color: #ff6f00; }
         .app-disney i { color: #00d2ff; }
 
-        .traffic-layout { display: flex; gap: 20px; height: 100%; }
+        .traffic-layout { display: flex; gap: 20px; height: 100%; padding: 4px; }
         .camera-grid { flex: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .camera-card { background: #161920; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; position: relative; height: 100%; }
         .camera-title { background: rgba(0, 0, 0, 0.6); color: #fff; padding: 6px 10px; font-size: 13px; position: absolute; top: 0; left: 0; width: 100%; z-index: 2; }
@@ -112,7 +133,7 @@
         .alert-item { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; border-left: 4px solid var(--success-color); font-size: 13px; }
         .alert-item.warning { border-left-color: var(--warning-color); }
 
-        .beaches-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; height: 100%; }
+        .beaches-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; height: 100%; padding: 4px; }
         .beach-card { background: var(--card-bg); border-radius: 16px; padding: 20px 15px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; height: 90%; }
         .beach-name { font-size: 18px; font-weight: 700; text-align: center; }
         
@@ -125,11 +146,20 @@
         .stat-row { display: flex; justify-content: space-between; font-size: 14px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
         .stat-row strong { color: #fff; }
 
-        .weather-weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; height: 90%; }
-        .weather-day-card { background: var(--card-bg); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; padding: 15px 5px; height: 100%; }
-        .weather-day-card .day-name { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.8); }
-        .weather-day-card i { font-size: 44px; color: #ffb300; }
-        .weather-day-card .temp-range { font-size: 16px; font-weight: 500; }
+        .weather-weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 90%; padding: 4px; }
+        .weather-day-card { background: var(--card-bg); border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 18px 8px; height: 100%; border: 1px solid rgba(255,255,255,0.03); }
+        .weather-day-card .day-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .weather-day-card i.main-icon { font-size: 46px; color: #ffb300; margin: 4px 0; }
+        .weather-day-card .temp-range { font-size: 15px; font-weight: 700; background: rgba(0,0,0,0.25); padding: 4px 10px; border-radius: 20px; width: 90%; text-align: center; margin-bottom: 8px; }
+        
+        .day-extra-stats { width: 100%; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.02); padding: 8px 6px; border-radius: 8px; }
+        .extra-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.65); }
+        .extra-row div { display: flex; align-items: center; gap: 3px; }
+        .extra-row i { font-size: 13px; }
+        .extra-row strong { color: #fff; font-weight: 500; }
+        .icon-rain { color: var(--info-blue); }
+        .icon-humidity { color: #a29bfe; }
+        .icon-feels { color: #e74c3c; }
 
         .ticker-container {
             height: 36px; background: rgba(22, 25, 32, 0.85); border: 1px solid rgba(255, 255, 255, 0.05);
@@ -218,7 +248,7 @@
         <!-- TIEMPO SEMANAL -->
         <div id="tiempo-semanal" class="tab-content">
             <div class="weather-weekly-grid" id="weekly-forecast">
-                <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando previsión...</div>
+                <div style="color:rgba(255,255,255,0.4); grid-column:1/-1; text-align:center; padding-top:40px;">Cargando previsión extendida...</div>
             </div>
         </div>
     </main>
@@ -234,14 +264,12 @@
     </div>
 
     <script>
-        // Reloj directo sin bucles extraños
         function updateClock() {
             var now = new Date();
             document.getElementById('clock').textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // Pestañas
         function openTab(tabId) {
             var contents = document.querySelectorAll('.tab-content');
             var buttons = document.querySelectorAll('.tab-btn');
@@ -254,7 +282,6 @@
             updateDynamicFocusElements();
         }
 
-        // Sistema redundante de clima para evitar bloqueos por IP
         var isFetchingData = false;
 
         function renderWeatherData(currentTemp, wind, uv, dailyForecast) {
@@ -282,9 +309,28 @@
             var weeklyHtml = '';
             for(var i = 0; i < 7; i++) {
                 var nombreDia = (i === 0) ? 'Hoy' : dias[(hoy + i) % 7];
-                var f = dailyForecast[i] || { max: currentTemp, min: currentTemp - 5, cloud: false };
+                
+                var f = dailyForecast[i] || { 
+                    max: currentTemp, 
+                    min: currentTemp - 5, 
+                    cloud: false, 
+                    rainChance: 0, 
+                    humidity: 60, 
+                    feelsLike: currentTemp 
+                };
+                
                 var icon = f.cloud ? 'cloud' : 'wb_sunny';
-                weeklyHtml += '<div class="weather-day-card"><span class="day-name">' + nombreDia + '</span><i class="material-icons">' + icon + '</i><span class="temp-range">' + f.max + '° / ' + f.min + '°</span></div>';
+                
+                weeklyHtml += '<div class="weather-day-card">' +
+                    '<span class="day-name">' + nombreDia + '</span>' +
+                    '<i class="material-icons main-icon">' + icon + '</i>' +
+                    '<span class="temp-range">' + f.max + '° / ' + f.min + '°</span>' +
+                    '<div class="day-extra-stats">' +
+                        '<div class="extra-row"><div><i class="material-icons icon-rain">water_drop</i><span>Lluvia</span></div><strong>' + f.rainChance + '%</strong></div>' +
+                        '<div class="extra-row"><div><i class="material-icons icon-humidity">opacity</i><span>Humedad</span></div><strong>' + f.humidity + '%</strong></div>' +
+                        '<div class="extra-row"><div><i class="material-icons icon-feels">thermostat</i><span>Sensación</span></div><strong>' + f.feelsLike + '°</strong></div>' +
+                    '</div>' +
+                '</div>';
             }
             document.getElementById('weekly-forecast').innerHTML = weeklyHtml;
 
@@ -295,7 +341,6 @@
         }
 
         function fetchFallbackWeather() {
-            // Clave limpia y endpoint alternativo dedicado sin restricciones masivas
             fetch('https://api.weatherapi.com/v1/forecast.json?key=de320be67ec84203bc7144933240406&q=Marbella&days=7&aqi=no', {
                 method: 'GET',
                 cache: 'no-cache'
@@ -315,17 +360,24 @@
                         var txt = day.day.condition.text.toLowerCase();
                         isCloudy = (txt.indexOf('cloud') !== -1 || txt.indexOf('rain') !== -1 || txt.indexOf('overcast') !== -1);
                     }
+                    
+                    var rainChance = (day.day && typeof day.day.daily_chance_of_rain !== 'undefined') ? day.day.daily_chance_of_rain : 0;
+                    var humidity = (day.day && typeof day.day.avghumidity !== 'undefined') ? Math.round(day.day.avghumidity) : 55;
+                    var feelsLike = (day.day && typeof day.day.maxtemp_c !== 'undefined') ? Math.round(day.day.maxtemp_c) : currentTemp;
+
                     dailyForecast.push({
                         max: Math.round(day.day.maxtemp_c || currentTemp),
                         min: Math.round(day.day.mintemp_c || currentTemp - 4),
-                        cloud: isCloudy
+                        cloud: isCloudy,
+                        rainChance: rainChance,
+                        humidity: humidity,
+                        feelsLike: feelsLike
                     });
                 });
                 renderWeatherData(currentTemp, wind, uv, dailyForecast);
                 isFetchingData = false;
             })
             .catch(function() {
-                console.log('Ambos servidores caídos por completo.');
                 renderWeatherData(21, 14, 6, []); 
                 isFetchingData = false;
             });
@@ -335,7 +387,7 @@
             if (isFetchingData) return;
             isFetchingData = true;
 
-            fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FMadrid', {
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=36.5099&longitude=-4.8858&current=temperature_2m,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min,weather_code,apparent_temperature_max,precipitation_probability_max,relative_humidity_2m_max&timezone=Europe%2FMadrid', {
                 method: 'GET',
                 cache: 'no-cache', 
                 headers: { 'Accept': 'application/json' }
@@ -351,7 +403,10 @@
                     dailyForecast.push({
                         max: Math.round(data.daily.temperature_2m_max[i]),
                         min: Math.round(data.daily.temperature_2m_min[i]),
-                        cloud: data.daily.weather_code[i] > 3
+                        cloud: data.daily.weather_code[i] > 3,
+                        rainChance: data.daily.precipitation_probability_max ? data.daily.precipitation_probability_max[i] : 0,
+                        humidity: data.daily.relative_humidity_2m_max ? Math.round(data.daily.relative_humidity_2m_max[i] * 0.8) : 60,
+                        feelsLike: data.daily.apparent_temperature_max ? Math.round(data.daily.apparent_temperature_max[i]) : Math.round(data.daily.temperature_2m_max[i])
                     });
                 }
                 renderWeatherData(currentTemp, wind, uv, dailyForecast);
@@ -363,9 +418,8 @@
         }
         
         setTimeout(fetchAutomatedData, 1000); 
-        setInterval(fetchAutomatedData, 3600000); // Petición espaciada a una hora para evitar baneos de IP
+        setInterval(fetchAutomatedData, 3600000);
 
-        // Fallback Inteligente (Android TV vs iPad iOS)
         function fallbackApp(event, nativeUrl, webUrl) {
             event.preventDefault();
             var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -377,7 +431,6 @@
             }
         }
 
-        // Motor D-Pad y Sincronización Táctil
         var focusableElements = []; var currentIndex = 0;
         function updateDynamicFocusElements() {
             var all = document.querySelectorAll('.focusable'); focusableElements = [];
@@ -407,7 +460,7 @@
                     break;
                 case 'ArrowUp':
                     if (grp === 'apps') {
-                        for (var n = 0; n < focusableElements.length; n++) { if (focusableElements[n].getAttribute('data-nav') === 'nav') { currentIndex = n; applyFocus(); break; } }
+                        for (var n = 0; n < focusableElements.length; n++) { if (focusableElements[n].getAttribute('data-nav') === 'nav') { currentIndex = n; applyFocus(); break; } n++) }
                     }
                     break;
                 case 'Enter': if (focusableElements[currentIndex]) focusableElements[currentIndex].click(); break;
@@ -424,13 +477,11 @@
             });
         });
 
-        // Refresco de cámaras DGT
         setInterval(function() {
             var cams = document.querySelectorAll('.dgt-cam');
             for (var i = 0; i < cams.length; i++) { cams[i].src = cams[i].src.split('?')[0] + '?t=' + new Date().getTime(); }
         }, 15000);
 
-        // Ticker MD
         function loadTicker() {
             fetch('./ticker.md?t=' + new Date().getTime())
             .then(function(res) { return res.text(); }).then(function(text) {
